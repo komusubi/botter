@@ -44,7 +44,7 @@ public enum GaeContext {
 	CONTEXT;
 	private static final Logger logger = LoggerFactory.getLogger(GaeContext.class);
 	private ServletContext servletContext;
-	private ResolverManager resolverManager;
+//	private ResolverManager resolverManager;
 	private Properties properties;
 	private Injector injector;
 //	public static final String TWEET_ACCOUNT_ID = "twitter.id";
@@ -88,10 +88,15 @@ public enum GaeContext {
 		initialize();
 	}
 	
-	public Resolver<Date> getDateResolver() {
-		return getResolverManager().getDateResolver();
+	@SuppressWarnings("unchecked")
+	public <T> T getInstance(Class<T> type) {
+		T instance = null;
+		if (type != null && type.equals(GaeContext.class))
+			instance = (T) CONTEXT;
+		else 
+			instance = injector.getInstance(type);
+		return instance;
 	}
-	
 	public ResolverManager getResolverManager() {
 		Provider<ResolverManager> provider = injector.getProvider(ResolverManager.class);
 		return provider.get();

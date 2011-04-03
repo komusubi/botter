@@ -18,12 +18,12 @@
  */
 package jp.dip.komusubi.botter.gae.service.jal5971;
 
+import static jp.dip.komusubi.botter.gae.GaeContext.CONTEXT;
+import static org.junit.Assert.assertEquals;
 import jp.dip.komusubi.botter.gae.GaeContextFactory;
 
 import org.junit.Before;
 import org.junit.Test;
-
-
 
 /**
  * @author jun.ozeki
@@ -36,12 +36,10 @@ public class NavigationEntryTest {
 	
 	@Before
 	public void before() {
-		new GaeContextFactory().initializeContext();
+		GaeContextFactory.initializeContext();
 	}
-	
-	@Test
-	public void インスタンス() {
-		String content = "≪東北地方太平洋沖地震の影響による運航便情報について≫"
+	// package private
+	static String content = "≪東北地方太平洋沖地震の影響による運航便情報について≫"
 			+ "3月11日に発生した地震の影響により、仙台空港の再開日程が未確定のため、"
 			+ "仙台空港発着便については、4月28日まで全便欠航が決定しております。"
 			+ "空港再開の目処が立ちましたら、速やかに、新たな運航便を設定いたします。"
@@ -86,7 +84,13 @@ public class NavigationEntryTest {
  			+ "◆次回のご案内は明朝を予定しております。"
  			+ "状況により、掲載時間が変更になる可能性がございます。"
  			+ "その他、個別の便毎の発着状況については、「国内線　発着案内」をご確認ください。";
+	
+	@Test
+	public void parse() {
+		String expected = "≪明日25日≫【運航概況】以下の空港は、遅延、欠航、出発空港への引き返し、"
+			+ "他空港への着陸の可能性がある空港です。秋田（降雪）その他は、現在のところ平常どおりの運航を予定しています。hashTag1 hashTag2 ";
 		target = new NavigationEntry("http://example.jp", content, "hashTag1", "hashTag2");
-		System.out.println(target.getText());
+		assertEquals(expected, target.getText());
+		assertEquals(CONTEXT.getResolverManager().getDateResolver().resolve(), target.getDate());
 	}
 }

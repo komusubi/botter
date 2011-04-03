@@ -50,14 +50,19 @@ import com.google.inject.Module;
  * @since 2011/03/21
  */
 public class GaeContextFactory {
-
-	public GaeContext getMockContext(Injector injector, ServletContext servletContext) {
+	private static Class<?> testCaseClass;
+	
+	public static GaeContext getMockContext(Injector injector, ServletContext servletContext) {
 		GaeContext.CONTEXT.setInjector(injector);
 		GaeContext.CONTEXT.setServletContext(servletContext);
 		return GaeContext.CONTEXT;
 	}
-	
-	public void initializeContext() {
+	public static void initializeContext() {
+		initializeContext(null);
+	}
+	public static void initializeContext(Class<?> clazz) {
+		if (clazz != null)
+			testCaseClass = clazz;
 		GaeContext.CONTEXT.setInjector(getDefaultInjector());
 		GaeContext.CONTEXT.setServletContext(getDefaultServletContext());
 	}
@@ -65,7 +70,7 @@ public class GaeContextFactory {
 	/**
 	 * @return
 	 */
-	private Injector getDefaultInjector() {
+	private static Injector getDefaultInjector() {
 		return Guice.createInjector(new Module() {
 
 			@Override
@@ -119,7 +124,7 @@ public class GaeContextFactory {
 	/**
 	 * @return
 	 */
-	private ServletContext getDefaultServletContext() {
+	private static ServletContext getDefaultServletContext() {
 		return new ServletContext() {
 
 			@Override
@@ -184,7 +189,13 @@ public class GaeContextFactory {
 
 			@Override
 			public String getRealPath(String arg0) {
-				return "target/test-classes" + arg0;
+				String filename = arg0.replace("/WEB-INF", "");
+				String path = "target/test-classes/";
+				if (testCaseClass != null)
+					path += testCaseClass.getPackage().getName().replace(".", "/");
+				else
+					path += filename;
+				return path;
 			}
 
 			@Override
