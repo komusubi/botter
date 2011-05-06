@@ -22,7 +22,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
 
-import jp.dip.komusubi.botter.api.Resolver;
+import jp.dip.komusubi.botter.Resolver;
 import jp.dip.komusubi.botter.gae.ParseException;
 import jp.dip.komusubi.botter.gae.model.Entry;
 
