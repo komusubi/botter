@@ -47,7 +47,8 @@ public class FlightOverviewScraper implements Scraper {
 	private static final String JAL5971_WEATHER_AND_STATUS_URL = "jal5971.weather.status.url";
 	private Parser parser;
 	private String url;
-
+	private String[] tags;
+	
 	/**
 	 * constructor.
 	 */
@@ -69,6 +70,20 @@ public class FlightOverviewScraper implements Scraper {
 		this.url = url;
 	}
 	
+	/**
+	 * constructor.
+	 * @param url
+	 * @param tags
+	 */
+	public FlightOverviewScraper(String url, String... tags) {
+		this(url);
+		this.tags = tags;
+	}
+	
+	public FlightOverviewScraper(String... tags) {
+		this();
+		this.tags = tags;
+	}
 	@Override
 	public List<Entry> scrape() {
 		NodeClassFilter nodeFilter = new NodeClassFilter(Div.class);
@@ -81,8 +96,8 @@ public class FlightOverviewScraper implements Scraper {
 			parser.setResource(url);
 			NodeList nodeList = parser.parse(andFilter);
 			List<Entry> entries = new ArrayList<Entry>(3);
-			entries.add(new WeatherEntry(url, nodeList.asString(), "#JAL"));
-			entries.add(new NavigationEntry(url, nodeList.asString(), "#JAL"));
+			entries.add(new WeatherEntry(url, nodeList.asString(), tags));
+			entries.add(new NavigationEntry(url, nodeList.asString(), tags));
 			return entries; 
 		} catch (ParseException e) { // message parse
 			throw new ParseException(e);

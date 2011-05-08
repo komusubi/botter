@@ -21,7 +21,7 @@ import static jp.dip.komusubi.botter.gae.GaeContext.CONTEXT;
 import java.util.Calendar;
 import java.util.Date;
 
-import jp.dip.komusubi.botter.api.Resolver;
+import jp.dip.komusubi.botter.Resolver;
 import jp.dip.komusubi.botter.gae.ParseException;
 
 import org.apache.commons.lang.time.DateFormatUtils;
