@@ -19,7 +19,6 @@
 package jp.dip.komusubi.botter.gae.module;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import jp.dip.komusubi.botter.gae.model.Aggregator;
@@ -48,7 +47,12 @@ public class HtmlAggregator implements Aggregator {
 	 * @param scraper
 	 */
 	public HtmlAggregator(Scraper... scraper) {
-		this(Arrays.asList(scraper));
+		this(new ArrayList<Scraper>());
+		scrapers.addAll(scrapers);
+	}
+	
+	public void add(Scraper scraper) {
+		scrapers.add(scraper);
 	}
 	
 	@Override
@@ -61,5 +65,4 @@ public class HtmlAggregator implements Aggregator {
 		}
 		return entries;
 	}
-
 }

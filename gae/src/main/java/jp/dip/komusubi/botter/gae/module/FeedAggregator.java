@@ -39,6 +39,7 @@ import com.sun.syndication.fetcher.impl.FeedFetcherCache;
 import com.sun.syndication.fetcher.impl.HashMapFeedInfoCache;
 import com.sun.syndication.fetcher.impl.HttpURLFeedFetcher;
 import com.sun.syndication.fetcher.impl.SyndFeedInfo;
+import com.sun.syndication.io.ParsingFeedException;
 
 /**
  * @author jun.ozeki
@@ -123,17 +124,24 @@ public class FeedAggregator implements Aggregator {
 		List<Entry> entries = new ArrayList<Entry>();
 		try {
 			for (UrlEntry urlEntry: urlEntries) {
-				SyndFeed feed = feedFetcher.retrieveFeed(urlEntry.getUrl());
-				if (feed == null) {
-					logger.warn("feed is null: {}", urlEntry.getUrl());
-					continue;
+				try {
+					SyndFeed feed = feedFetcher.retrieveFeed(urlEntry.getUrl());
+					if (feed == null) {
+						logger.warn("feed is null: {}", urlEntry.getUrl());
+						continue;
+					}
+					for (Iterator<?> it = feed.getEntries().iterator(); it.hasNext(); ) {
+						SyndEntry entry = (SyndEntry) it.next();
+						entries.add(new SyndEntryMessage(entry, urlEntry.getHashTags()));
+					}
+					// feed は最新のentryが先頭になるので reverseする。
+					Collections.reverse(entries);
+				} catch (ParsingFeedException e) {
+					// UrlEntryは複数保持するのでtry - catch はfor文で繰り返し判定
+					logger.error("feed parse exception. \"{}\" might not be a RSS or feeder url: {}",
+							urlEntry.getUrl().toExternalForm(),
+							e.getLocalizedMessage());
 				}
-				for (Iterator<?> it = feed.getEntries().iterator(); it.hasNext(); ) {
-					SyndEntry entry = (SyndEntry) it.next();
-					entries.add(new SyndEntryMessage(entry, urlEntry.getHashTags()));
-				}
-				// feed は最新のentryが先頭になるので reverseする。
-				Collections.reverse(entries);
 			}
 		} catch (Exception e) {
 			throw new BotterException(e);
