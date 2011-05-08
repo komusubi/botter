@@ -18,25 +18,37 @@
  */
 package jp.dip.komusubi.botter.gae.service;
 
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
-import jp.dip.komusubi.botter.api.Bird;
+import jp.dip.komusubi.botter.Bird;
+import jp.dip.komusubi.botter.Status;
 import jp.dip.komusubi.botter.gae.model.Aggregator;
 import jp.dip.komusubi.botter.gae.model.Entry;
 import jp.dip.komusubi.botter.gae.module.FeedAggregator;
 import jp.dip.komusubi.botter.gae.module.FeedAggregator.UrlEntry;
 import jp.dip.komusubi.botter.gae.module.HtmlAggregator;
 import jp.dip.komusubi.botter.gae.service.jal5971.FlightOverviewScraper;
+
+import org.apache.abdera.Abdera;
+import org.apache.abdera.model.Feed;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author jun.ozeki
@@ -45,10 +57,12 @@ import jp.dip.komusubi.botter.gae.service.jal5971.FlightOverviewScraper;
  */
 @Path("/bird/jal5971")
 public class Jal5971Resource {
-
+	private static final Logger logger = LoggerFactory.getLogger(Jal5971Resource.class);
+	private static final int TWEET_MESSAGE_MAX_SIZE = 140; 
 	private Bird bird;
 	// code point base count
-	private static final int TWEET_MESSAGE_MAX_SIZE = 140; 
+	private Abdera abdera = Abdera.getInstance();
+	@Context UriInfo uriInfo;
 	
 	@Inject
 	public Jal5971Resource(Bird bird) {
@@ -56,41 +70,105 @@ public class Jal5971Resource {
 	}
 	
 	@POST
-//	@Produces(MediaType.APPLICATION_ATOM_XML)
-	@Produces(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_ATOM_XML)
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("/feeder")
-	public void feeder() {
-//		Arrays.asList(
-//				new UrlEntry()
-		tweet(new FeedAggregator(new UrlEntry("http://rss.jal.co.jp/f4728/index.rdf", "#JAL")));
+	public Feed feeder(MultivaluedMap<String, String> formParam) {
+		if (logger.isDebugEnabled()) {
+			logger.info("url is {}", formParam.get("url"));
+			logger.info("tag is {}", formParam.get("tag"));
+		}
+		List<String> tags = formParam.get("tag"); 
+		if (tags == null)
+			tags = new ArrayList<String>();
+
+		Feed feed = abdera.newFeed();
+		feed.addAuthor(formParam.getFirst("author"),
+						formParam.getFirst("email"),
+						uriInfo.getAbsolutePath().toASCIIString());
+		if (formParam.get("url") == null || formParam.get("url").size() > 1) {
+			Response.status(Response.Status.UNSUPPORTED_MEDIA_TYPE);
+			return feed;
+		}
+		FeedAggregator aggregator = new FeedAggregator(
+				new UrlEntry(formParam.getFirst("url"), tags.toArray(new String[0]))); 
+		
+		return toFeed(feed, aggregator, tags);
+	}
+	
+	private Feed toFeed(Feed feed, Aggregator aggregator, List<String> tags) {
+		for (Entry e: aggregator.aggregate()) {
+			org.apache.abdera.model.Entry entry = abdera.newEntry();
+			entry.setId(String.valueOf(e.getId()));
+			entry.setContent(e.getText());
+			entry.setPublished(e.getDate());
+			for (String tag: tags)
+				entry.addCategory(tag);
+			entry.addLink(e.getUrl().toExternalForm());
+			feed.addEntry(entry);
+		}
+		return feed;
 	}
 	
 	@POST
-	@Produces(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_ATOM_XML)
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("/scraper")
-	public void scraper() {
-		tweet(new HtmlAggregator(new FlightOverviewScraper()));
+	public Feed scraper(MultivaluedMap<String, String> formParam) {
+		if (logger.isDebugEnabled()) {
+		}
+		List<String> tags = formParam.get("tag");
+		if (tags == null)
+			tags = new ArrayList<String>();
+		
+		Feed feed = abdera.newFeed();
+		feed.addAuthor(formParam.getFirst("author"),
+						formParam.getFirst("email"),
+						uriInfo.getAbsolutePath().toASCIIString());
+//		if (formParam.get("url") == null || formParam.get("url").size() > 1) {
+//			Response.status(Response.Status.UNSUPPORTED_MEDIA_TYPE);
+//			return feed;
+//		}
+		HtmlAggregator aggregator = new HtmlAggregator();
+		aggregator.add(new FlightOverviewScraper(tags.toArray(new String[0])));
+		
+		return toFeed(feed, aggregator, tags);
 	}
 	
-	private void tweet(Aggregator aggregator) {
+	private String tweet(Aggregator aggregator) {
 		List<Entry> list = aggregator.aggregate();
-		for (Entry entry: list)
-			tweet(entry.getText());
+		StringBuilder builder = new StringBuilder();
+		for (Entry entry: list) {
+			String result = tweet(entry.getText());
+			builder.append(result);
+		}
+		return builder.toString();
 	}
 	
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.TEXT_PLAIN)
 	public String hear(@PathParam("id") String id) {
-		return "hello world " + id;
+		Status status = bird.tweet("hello world " + id);
+		return id;
 	}
 	
 	@POST
 	@Produces(MediaType.TEXT_PLAIN)
 	@Path("/tweet")
-	public void tweet(String text) {
-		for (String message: chunk(text, TWEET_MESSAGE_MAX_SIZE)) 
-			bird.tweet(message);
+	public String tweet(String text) {
+		List<String> messages = chunk(text, TWEET_MESSAGE_MAX_SIZE);
+		StringWriter writer = new StringWriter();
+		if (messages.size() > 1) {
+			for (String message: messages) {
+				Status status = bird.tweet(message);
+				writer.write(status.getText());
+			}
+		} else {
+			Status status = bird.tweet(text);
+			writer.write(status.getText());
+		}
+		return writer.toString();
 	}
 	
 	protected List<String> chunk(String text, int size) {
