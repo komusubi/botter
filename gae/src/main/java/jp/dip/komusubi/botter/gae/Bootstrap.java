@@ -24,11 +24,11 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.servlet.ServletContextEvent;
 
-import jp.dip.komusubi.botter.api.Bird;
+import jp.dip.komusubi.botter.Bird;
 import jp.dip.komusubi.botter.gae.GaeContext.ResolverManager;
 import jp.dip.komusubi.botter.gae.GaeContext.ResolverManagerProvider;
 import jp.dip.komusubi.botter.gae.module.PersistenceManagerProvider;
-import jp.dip.komusubi.botter.gae.module.ServletBird;
+import jp.dip.komusubi.botter.gae.module.ConsoleBird;
 import jp.dip.komusubi.botter.gae.service.Jal5971Resource;
 import jp.dip.komusubi.botter.gae.servlet.filter.PersistenceFilter;
 
@@ -78,10 +78,10 @@ public final class Bootstrap extends GuiceServletContextListener {
 	private static class WebModule extends ServletModule {
 		@Override
 		protected void configureServlets() {
-			bind(Bird.class).to(ServletBird.class);
+			bind(Bird.class).to(ConsoleBird.class);
 			bind(Jal5971Resource.class);
 			filter("/*").through(PersistenceFilter.class);
-			serve("*").with(GuiceContainer.class);
+			serve("/*").with(GuiceContainer.class);
 		}
 	}
 	

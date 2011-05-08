@@ -25,8 +25,8 @@ import javax.inject.Provider;
 import javax.servlet.ServletContext;
 
 import jp.dip.komusubi.botter.BotterException;
-import jp.dip.komusubi.botter.api.Resolver;
-import jp.dip.komusubi.botter.api.UrlUtil;
+import jp.dip.komusubi.botter.Resolver;
+import jp.dip.komusubi.botter.UrlUtil;
 import jp.dip.komusubi.botter.util.BitlyUrlUtil;
 
 import org.slf4j.Logger;
