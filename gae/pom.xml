@@ -48,30 +48,16 @@
   </profiles>
   <dependencies>
   	<dependency>
-  		<groupId>org.apache.wicket</groupId>
-  		<artifactId>wicket-auth-roles</artifactId>
-  		<type>jar</type>
-  		<scope>compile</scope>
-  		<exclusions>
-  			<exclusion>
-  				<artifactId>slf4j-api</artifactId>
-  				<groupId>org.slf4j</groupId>
-  			</exclusion>
-  		</exclusions>
-  	</dependency>
-  	<dependency>
-  		<groupId>org.slf4j</groupId>
-  		<artifactId>slf4j-jdk14</artifactId>
-  		<type>jar</type>
-  		<scope>compile</scope>
-  	</dependency>
-  	<dependency>
   		<groupId>net.java.dev.rome</groupId>
   		<artifactId>rome-fetcher</artifactId>
   		<exclusions>
   			<exclusion>
   				<artifactId>xercesImpl</artifactId>
   				<groupId>xerces</groupId>
+  			</exclusion>
+  			<exclusion>
+  				<artifactId>commons-httpclient</artifactId>
+  				<groupId>commons-httpclient</groupId>
   			</exclusion>
   		</exclusions>
   	</dependency>
@@ -100,27 +86,35 @@
   				<artifactId>servlet-api</artifactId>
   				<groupId>javax.servlet</groupId>
   			</exclusion>
+  			<exclusion>
+  				<artifactId>commons-httpclient</artifactId>
+  				<groupId>commons-httpclient</groupId>
+  			</exclusion>
+  			<exclusion>
+  				<artifactId>htmlparser</artifactId>
+  				<groupId>nu.validator.htmlparser</groupId>
+  			</exclusion>
+  			<exclusion>
+  				<artifactId>commons-logging</artifactId>
+  				<groupId>commons-logging</groupId>
+  			</exclusion>
   		</exclusions>
   	</dependency>
   	<dependency>
   		<groupId>com.google.appengine</groupId>
   		<artifactId>appengine-api-labs</artifactId>
-  		<scope>test</scope>
+  		<scope>provided</scope>
   	</dependency>
   	<dependency>
   		<groupId>com.google.appengine</groupId>
   		<artifactId>appengine-api-stubs</artifactId>
-  		<scope>test</scope>
+  		<scope>provided</scope>
   	</dependency>
   	<dependency>
   		<groupId>jp.dip.komusubi.botter</groupId>
   		<artifactId>twitter</artifactId>
   		<type>jar</type>
   		<exclusions>
-  			<exclusion>
-  				<artifactId>logback-core</artifactId>
-  				<groupId>ch.qos.logback</groupId>
-  			</exclusion>
   			<exclusion>
   				<artifactId>logback-classic</artifactId>
   				<groupId>ch.qos.logback</groupId>
@@ -149,13 +143,11 @@
   		<groupId>com.google.appengine.orm</groupId>
   		<artifactId>datanucleus-appengine</artifactId>
   		<version>1.0.8</version>
-  		<type>jar</type>
   	</dependency>
   	<dependency>
   		<groupId>org.datanucleus</groupId>
   		<artifactId>datanucleus-core</artifactId>
-  		<version>3.0.0-m2</version>
-  		<type>jar</type>
+  		<version>1.1.5</version>
   		<exclusions>
   			<exclusion>
   				<artifactId>transaction-api</artifactId>
@@ -166,9 +158,7 @@
   	<dependency>
   		<groupId>org.datanucleus</groupId>
   		<artifactId>datanucleus-jpa</artifactId>
-  		<version>2.1.7</version>
-  		<type>jar</type>
-  		<scope>runtime</scope>
+  		<version>1.1.5</version>
   	</dependency>
   	<dependency>
   		<groupId>org.apache.geronimo.specs</groupId>
@@ -191,6 +181,73 @@
   		<type>jar</type>
   		<scope>compile</scope>
   	</dependency>
+  	<dependency>
+  		<groupId>org.wicketstuff</groupId>
+  		<artifactId>gae-initializer</artifactId>
+  		<version>1.5-RC3</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.apache.wicket</groupId>
+  		<artifactId>wicket-auth-roles</artifactId>
+  		<version>1.5-RC3</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.eclipse.jetty</groupId>
+  		<artifactId>jetty-server</artifactId>
+  		<version>8.0.0.M2</version>
+  		<scope>provided</scope>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.eclipse.jetty</groupId>
+  		<artifactId>jetty-webapp</artifactId>
+  		<version>8.0.0.M2</version>
+  		<scope>provided</scope>
+  	</dependency>
+  	<dependency>
+  		<groupId>com.sun.jersey</groupId>
+  		<artifactId>jersey-client</artifactId>
+  		<version>1.5</version>
+  		<type>jar</type>
+  		<scope>compile</scope>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.apache.wicket</groupId>
+  		<artifactId>wicket-guice</artifactId>
+  		<version>1.5-RC3</version>
+  		<type>jar</type>
+  		<scope>compile</scope>
+  	</dependency>
+  	<dependency>
+  		<groupId>com.google.appengine</groupId>
+  		<artifactId>appengine-local-runtime</artifactId>
+  		<version>${gae.version}</version>
+  		<type>jar</type>
+  		<scope>test</scope>
+  	</dependency>
+  	<dependency>
+  		<groupId>jp.dip.komusubi.botter</groupId>
+  		<artifactId>api</artifactId>
+  		<version>0.1-SNAPSHOT</version>
+  		<type>jar</type>
+  		<scope>compile</scope>
+  		<exclusions>
+  			<exclusion>
+  				<artifactId>logback-core</artifactId>
+  				<groupId>ch.qos.logback</groupId>
+  			</exclusion>
+  			<exclusion>
+  				<artifactId>logback-classic</artifactId>
+  				<groupId>ch.qos.logback</groupId>
+  			</exclusion>
+  		</exclusions>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.slf4j</groupId>
+  		<artifactId>slf4j-jdk14</artifactId>
+  		<version>1.6.1</version>
+  		<type>jar</type>
+  		<scope>compile</scope>
+  	</dependency>
   </dependencies>
   <build>
     <plugins>
@@ -200,6 +257,9 @@
         <configuration>
           <appDir>${project.build.directory}/${project.build.finalName}</appDir>
           <sdkDir>${gae.home}</sdkDir>
+          <!-- 
+          <sdkDir>/usr/local/share/applications/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.4.3.v201103311225</sdkDir>
+          -->
         </configuration>
         <dependencies>
           <dependency>
@@ -243,6 +303,7 @@
           <ajdtVersion>none</ajdtVersion>
           <downloadSources>true</downloadSources>
           <downloadJavadocs>true</downloadJavadocs>
+          <!-- 
           <additionalProjectnatures>
             <projectnature>com.google.appengine.eclipse.core.gaeNature</projectnature>
             <projectnature>com.google.gdt.eclipse.core.webAppNature</projectnature>
@@ -252,6 +313,7 @@
             <buildcommand>com.google.appengine.eclipse.core.enhancerbuilder</buildcommand>
             <buildcommand>com.google.appengine.eclipse.core.projectValidator</buildcommand>
           </additionalBuildcommands>
+          -->
         </configuration>
       </plugin>
     </plugins>

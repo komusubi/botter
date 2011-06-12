@@ -19,7 +19,9 @@ package jp.dip.komusubi.botter.gae;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Properties;
+import java.util.ResourceBundle;
 
 import javax.inject.Provider;
 import javax.servlet.ServletContext;
@@ -27,6 +29,8 @@ import javax.servlet.ServletContext;
 import jp.dip.komusubi.botter.BotterException;
 import jp.dip.komusubi.botter.Resolver;
 import jp.dip.komusubi.botter.UrlUtil;
+import jp.dip.komusubi.botter.gae.module.dao.JdoAirportDao;
+import jp.dip.komusubi.botter.gae.module.dao.JdoRouteDao;
 import jp.dip.komusubi.botter.util.BitlyUrlUtil;
 
 import org.slf4j.Logger;
@@ -44,8 +48,8 @@ public enum GaeContext {
 	CONTEXT;
 	private static final Logger logger = LoggerFactory.getLogger(GaeContext.class);
 	private ServletContext servletContext;
-//	private ResolverManager resolverManager;
 	private Properties properties;
+	private ResourceBundle resourceBundle;
 	private Injector injector;
 //	public static final String TWEET_ACCOUNT_ID = "twitter.id";
 //	public static final String TWEET_ACCOUNT_PASSWORD = "twitter.passowrd";
@@ -53,7 +57,10 @@ public enum GaeContext {
 	public static final String BITLY_API_KEY = "bit.ly.api.key";
 	public static final String JAL5971_INFO_URL = "jal5971.info.url";
 	public static final String JAL5971_INFO_HASHTAGS = "jal5971.info.hashtag";
+	public static final String AIRPORT_DAO = "airportDao";
+	public static final String ROUTE_DAO = "routeDao";
 	private static boolean done;
+	private HashMap<String, Class<?>> classmap;
 	
 	private void initialize() {
 		if (done) {
@@ -62,6 +69,16 @@ public enum GaeContext {
 		}
 		if (injector == null)
 			throw new IllegalStateException("injector must NOT be null.");
+		loadProperty();
+		loadResourceBundle();
+		loadClassmap();
+	}
+	private void loadClassmap() {
+		 classmap = new HashMap<String, Class<?>>();
+		 classmap.put(AIRPORT_DAO, JdoAirportDao.class);
+		 classmap.put(ROUTE_DAO, JdoRouteDao.class);
+	}
+	private void loadProperty() {
 		if (servletContext == null)
 			throw new IllegalStateException("servletContext must NOT be null.");
 		properties = new Properties();
@@ -76,7 +93,74 @@ public enum GaeContext {
 			throw new BotterException(e);
 		}
 	}
-	
+	private void loadResourceBundle() {
+		resourceBundle = ResourceBundle.getBundle("jp.dip.komusubi.botter.gae.messages");
+/*		ResourceBundle.Control is restricted class!!
+				new ResourceBundle.Control() {
+					@Override
+					public List<String> getFormats(String baseName) {
+						if (baseName == null)
+							throw new NullPointerException("baseName is null");
+						return Arrays.asList("xml");
+					}
+					@Override
+					public ResourceBundle newBundle(String baseName, Locale locale, String format,
+							ClassLoader loader, boolean reload) throws IllegalAccessException,
+							InstantiationException, IOException {
+						if (baseName == null || locale == null || format == null || loader == null)
+							throw new NullPointerException();
+						ResourceBundle bundle = null;
+						if (format.equals("xml")) {
+							String bundleName = toBundleName(baseName, locale);
+							String resourceName = toResourceName(bundleName, format);
+							InputStream stream = null;
+							if (reload) {
+								URL url = loader.getResource(resourceName);
+								if (url != null) {
+									URLConnection connection = url.openConnection();
+									if (connection != null) {
+										// Disable caches to get fresh data for
+										// reloading.
+										connection.setUseCaches(false);
+										stream = connection.getInputStream();
+									}
+								}
+							} else {
+								stream = loader.getResourceAsStream(resourceName);
+							}
+							if (stream != null) {
+								BufferedInputStream bis = new BufferedInputStream(stream);
+								bundle = new XmlResourceBundle(bis);
+								bis.close();
+							}
+						}
+						return bundle;
+					}
+				});
+*/									
+	}
+
+/*
+	private static class XmlResourceBundle extends ResourceBundle {
+		private Properties props;
+
+		public XmlResourceBundle(InputStream in) throws IOException {
+			props = new Properties();
+			props.loadFromXML(in);
+		}
+		@Override
+		protected Object handleGetObject(String key) {
+			return props.getProperty(key);
+		}
+
+		@Override
+		public Enumeration<String> getKeys() {
+			Set<String> keys = props.stringPropertyNames();
+			return Collections.enumeration(keys);
+		}
+	}
+*/
+		
 //	 getInstance
 	public synchronized static GaeContext getInstance() {
 		return CONTEXT;
@@ -87,7 +171,12 @@ public enum GaeContext {
 		this.servletContext = servletContext;
 		initialize();
 	}
-	
+	// getInstance
+	@SuppressWarnings("unchecked")
+	public <T> T getInstance(String name) {
+		return (T) getInstance(classmap.get(name));
+	}
+	// getInstance
 	@SuppressWarnings("unchecked")
 	public <T> T getInstance(Class<T> type) {
 		T instance = null;
@@ -144,5 +233,9 @@ public enum GaeContext {
 
 	void setInjector(Injector injector) {
 		this.injector = injector;
+	}
+	// message 
+	public String getMessage(String key) {
+		return resourceBundle.getString(key);
 	}
 }

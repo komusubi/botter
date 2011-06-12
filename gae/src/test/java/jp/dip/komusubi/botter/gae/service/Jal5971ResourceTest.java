@@ -23,8 +23,8 @@ import static org.junit.Assert.assertEquals;
 import java.io.OutputStreamWriter;
 import java.util.List;
 
-import jp.dip.komusubi.botter.api.Bird;
-import jp.dip.komusubi.botter.gae.module.ServletBird;
+import jp.dip.komusubi.botter.Bird;
+import jp.dip.komusubi.botter.gae.module.ConsoleBird;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -41,8 +41,9 @@ public class Jal5971ResourceTest {
 	
 	@Before
 	public void before() {
-		Bird bird = new ServletBird(new OutputStreamWriter(System.out));
-		target = new Jal5971Resource(bird);
+		Bird bird = new ConsoleBird(new OutputStreamWriter(System.out));
+		// FIXME jobManagerProvider のinjection
+		target = new Jal5971Resource(bird, null);
 	}
 	
 	@Test

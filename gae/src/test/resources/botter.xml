@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>botter configuration</comment>
+<entry key="jal5971.weather.status.url">http://www.jal.co.jp/cms/other/ja/weather_info_dom.html</entry>
+<entry key="jal5971.flight.status.url">http://www.5971.jal.co.jp/rsv/ArrivalAndDepartureSectionInfo.do</entry>
+</properties>

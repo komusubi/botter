@@ -18,6 +18,9 @@
  */
 package jp.dip.komusubi.botter.gae;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.inject.Singleton;
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
@@ -27,10 +30,20 @@ import javax.servlet.ServletContextEvent;
 import jp.dip.komusubi.botter.Bird;
 import jp.dip.komusubi.botter.gae.GaeContext.ResolverManager;
 import jp.dip.komusubi.botter.gae.GaeContext.ResolverManagerProvider;
-import jp.dip.komusubi.botter.gae.module.PersistenceManagerProvider;
+import jp.dip.komusubi.botter.gae.model.Job;
 import jp.dip.komusubi.botter.gae.module.ConsoleBird;
+import jp.dip.komusubi.botter.gae.module.FlightStatusTwitter;
+import jp.dip.komusubi.botter.gae.module.JobManager;
+import jp.dip.komusubi.botter.gae.module.JobManagerProvider;
+import jp.dip.komusubi.botter.gae.module.PersistenceManagerProvider;
+import jp.dip.komusubi.botter.gae.module.dao.JdoEntryMessageDao;
+import jp.dip.komusubi.botter.gae.module.dao.JdoFeedElementDao;
 import jp.dip.komusubi.botter.gae.service.Jal5971Resource;
 import jp.dip.komusubi.botter.gae.servlet.filter.PersistenceFilter;
+import jp.dip.komusubi.botter.gae.wicket.BotterWicketFilter;
+import jp.dip.komusubi.botter.gae.wicket.GaeWebApplication;
+
+import org.apache.wicket.protocol.http.WicketFilter;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -75,28 +88,39 @@ public final class Bootstrap extends GuiceServletContextListener {
 	 * @version $Id: Bootstrap.java 1356 2010-12-31 05:13:01Z jun $
 	 * @since 2010/12/30
 	 */
-	private static class WebModule extends ServletModule {
+	public static class WebModule extends ServletModule {
 		@Override
 		protected void configureServlets() {
+			
 			bind(Bird.class).to(ConsoleBird.class);
 			bind(Jal5971Resource.class);
+			bind(JdoEntryMessageDao.class);
+			bind(JdoFeedElementDao.class);
+			Map<String, String> param = new HashMap<String, String>(2);
+			param.put(WicketFilter.FILTER_MAPPING_PARAM, "/*");
+			param.put("applicationClassName", GaeWebApplication.class.getName());
+			param.put("wicket.configuration", "DEPLOYMENT");
+			bind(BotterWicketFilter.class).in(Singleton.class);
 			filter("/*").through(PersistenceFilter.class);
+			filter("/*").through(BotterWicketFilter.class, param);
 			serve("/*").with(GuiceContainer.class);
 		}
 	}
 	
+	
 	/**
 	 * 
 	 * @author jun.ozeki
 	 * @version $Id: Bootstrap.java 1356 2010-12-31 05:13:01Z jun $
 	 * @since 2010/12/26
 	 */
-	private static class PersistenceModule extends AbstractModule {
+	public static class PersistenceModule extends AbstractModule {
 
 		@Override
 		protected void configure() {
-			bind(PersistenceManager.class).toProvider(PersistenceManagerProvider.class).in(ServletScopes.REQUEST);
 			bind(ResolverManager.class).toProvider(ResolverManagerProvider.class).in(Singleton.class);
+			bind(JobManager.class).toProvider(JobManagerProvider.class).in(Singleton.class);
+			bind(Job.class).to(FlightStatusTwitter.class);
 		}
 	}
 	
@@ -106,12 +130,12 @@ public final class Bootstrap extends GuiceServletContextListener {
 	 * @version $Id: Bootstrap.java 1356 2010-12-31 05:13:01Z jun $
 	 * @since 2010/12/26
 	 */
-	private static class AppEngineModule extends AbstractModule {
+	public static class AppEngineModule extends AbstractModule {
 		private PersistenceManagerFactory pmf = JDOHelper.getPersistenceManagerFactory("transactions-optional");
 		
 		@Override
 		protected void configure() {
-
+			bind(PersistenceManager.class).toProvider(PersistenceManagerProvider.class).in(ServletScopes.REQUEST);
 		}
 
 		@Provides

@@ -24,13 +24,16 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -40,10 +43,13 @@ import jp.dip.komusubi.botter.Bird;
 import jp.dip.komusubi.botter.Status;
 import jp.dip.komusubi.botter.gae.model.Aggregator;
 import jp.dip.komusubi.botter.gae.model.Entry;
-import jp.dip.komusubi.botter.gae.module.FeedAggregator;
-import jp.dip.komusubi.botter.gae.module.FeedAggregator.UrlEntry;
-import jp.dip.komusubi.botter.gae.module.HtmlAggregator;
-import jp.dip.komusubi.botter.gae.service.jal5971.FlightOverviewScraper;
+import jp.dip.komusubi.botter.gae.model.Job;
+import jp.dip.komusubi.botter.gae.module.JobManager;
+import jp.dip.komusubi.botter.gae.module.JobManagerProvider;
+import jp.dip.komusubi.botter.gae.module.aggregator.FeedAggregator;
+import jp.dip.komusubi.botter.gae.module.aggregator.FeedAggregator.UrlEntry;
+import jp.dip.komusubi.botter.gae.module.aggregator.HtmlAggregator;
+import jp.dip.komusubi.botter.gae.module.jal5971.FlightOverviewScraper;
 
 import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Feed;
@@ -63,14 +69,16 @@ public class Jal5971Resource {
 	// code point base count
 	private Abdera abdera = Abdera.getInstance();
 	@Context UriInfo uriInfo;
+	private JobManagerProvider jobManagerProvider;
 	
 	@Inject
-	public Jal5971Resource(Bird bird) {
+	public Jal5971Resource(Bird bird, Provider<JobManagerProvider> provider) {
 		this.bird = bird;
+		this.jobManagerProvider= provider.get();
 	}
 	
 	@POST
-	@Produces(MediaType.APPLICATION_ATOM_XML)
+	@Produces({MediaType.APPLICATION_ATOM_XML, MediaType.APPLICATION_JSON})
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("/feeder")
 	public Feed feeder(MultivaluedMap<String, String> formParam) {
@@ -169,6 +177,30 @@ public class Jal5971Resource {
 			writer.write(status.getText());
 		}
 		return writer.toString();
+	}
+
+	// cron
+	@GET
+	@Path("/cron/{job}")
+	public Response cron(@Context HttpHeaders headers, @PathParam("job") String jobId) {
+		List<String> crons = headers.getRequestHeader("X-AppEngine-Cron");
+		String appEngineCron = crons != null ? crons.get(0) : "false"; 
+		// cron 以外からのアクセス 401 error
+		if (!Boolean.valueOf(appEngineCron))
+			throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+		JobManager jobManager = jobManagerProvider.get();
+		Job job = jobManager.find(jobId);
+		Response response;
+		// from query parameter
+		if (job.available(uriInfo.getQueryParameters())) {
+			if (job.execute())
+				response = Response.ok().build();
+			else
+				response = Response.status(Response.Status.BAD_REQUEST).build();
+		} else {
+			response = Response.notModified().build();
+		}
+		return response;
 	}
 	
 	protected List<String> chunk(String text, int size) {

@@ -1,0 +1,1365 @@
+
+
+
+
+
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="ja">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<meta http-equiv="Content-Script-Type" content="text/javascript">
+<title>JAL国内線 - 発着案内</title>
+<link rel="stylesheet" type="text/css" media="all" href="/domes/common4/css/base.css">
+<link rel="stylesheet" type="text/css" media="all" href="/domes/common4/css/base2.css">
+<link rel="stylesheet" type="text/css" media="print" href="/domes/common4/css/print.css">
+<link rel="stylesheet" type="text/css" media="all" href="/domes/common4/css/global_header_book.css">
+<link rel="stylesheet" type="text/css" media="all" href="/domes/common4/css/information_block.css">
+<script type="text/javascript" src="/domes/common4/js/common.js"></script>
+<style type="text/css">
+<!--
+div.flightSelectFormBlockA01 table.selectionBlock td.pseudo-firsrtChild
+	{
+	border-right: none !important;
+	}
+
+#completedTable
+{
+width: 765px;
+-moz-box-sizing: border-box;
+box-sizing: border-box;
+border: 1px solid #787878;
+margin: 0;
+padding: 0;
+}
+
+#completedTable table
+{
+margin: 0;
+padding: 0;
+width: 100%;
+border: none;
+font-size: 12px;
+}
+
+/*
+#completedTable-body
+{
+font-family: Tahoma, Arial, Verdana, "MS UI Gothic", sans-serif;
+}
+*/
+
+#completedTable-body table
+{
+border-collapse: collapse;
+}
+
+#completedTable table.bargainTableA01 td
+{
+height:35px;
+}
+#completedTable table.bargainTableA01 th,
+#completedTable table.bargainTableA01 td
+{
+margin: 0;
+padding:5px 0;
+border-width:1px;
+border-style:solid;
+border-color:#a8a8a8 #d6d6d6 #d6d6d6 #d6d6d6;
+vertical-align: middle;
+line-height: 1;
+font-weight: normal;
+}
+
+#completedTable table.bargainTableA01 th
+{
+text-align: center;
+background-color:#B2B2B2;
+}
+
+#completedTable table.bargainTableA01 td.center
+{
+text-align: center;
+}
+
+#completedTable table.bargainTableA01 td.highlight
+{
+text-align: center;
+background-color:#ffcccc;
+}
+
+#completedTable table.bargainTableA01 tbody#bording td
+{
+border-top:2px solid #a8a8a8;
+}
+
+td.bordingspace
+{
+border-top:1px solid #a8a8a8 !important;
+}
+
+#completedTable table.bargainTableA01 tbody tr.bgbording td
+{
+background-color:#eee;
+}
+
+#completedTable table.bargainTableA01 tbody td.completed
+{
+color:#990000;
+}
+
+tr.thead01 td{
+border-top-color:#000;
+}
+.emData{
+color:#cc0000;
+}
+.emData2{
+color:#0000FF;
+}
+.style2{
+color: #cc0000; font-weight: bold;
+}
+.plane{
+padding:0 2px;
+}
+-->
+</style>
+</head>
+
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+<script language="JavaScript1.2">
+<!--
+// -->
+</script>
+
+		
+		
+		
+		
+			<form>
+				<div id="globalHeader">
+					<h1>
+						<a href="http://www.jal.co.jp"><img src="/domes/common4/img/header_logo_001.gif" width="171" height="38" alt="JAL | JAPAN AIRLINES"></a></h1>
+						<ul>
+						
+						<li><a href="/rsv/home.do" onmouseover="status='';return true"><img src="/domes/common4/img/icon_triangle_001.gif" width="6" height="5" alt="">国内線TOP</a></li>
+						<li><a href="https://www.jal.co.jp/help/" target="otherwindow"><img src="/domes/common4/img/icon_window_001.gif" width="14" height="11" alt="">ヘルプ</a></li>
+						</ul>
+				</div>
+			</form>
+		
+
+
+
+
+
+
+
+<!--  JavaScriptOff 時対応 -->
+<noscript>
+	<table width="767" border="0" cellpadding="0" cellspacing="0">
+		<tr>
+			<td width="12"><img src="/domes/common4/img/clear.gif" alt="" width="12" height="7"></td>
+			<td width="743"><img src="/domes/common4/img/clear.gif" alt="" width="743" height="7"></td>
+			<td width="12"><img src="/domes/common4/img/clear.gif" alt="" width="12" height="7"></td>
+		</tr>
+		<tr>
+			<td width="12"></td>
+			<td width="743">
+				<table width="726" border="0" cellpadding="0" cellspacing="0">
+					<tr>
+						<td height="1"></td>
+					</tr>
+					<tr>
+						<td bgcolor="#999999">
+							<table width="100%" border="0" cellpadding="0" cellspacing="1">
+								<tr>
+									<td bgcolor="#FFFFFF">
+										<table width="100%" border="0" cellpadding="2" cellspacing="1">
+											<tr>
+												<td width="13%" align="center" nowrap bgcolor="#EEEEEE">
+													<span class="s3"><font color="#993300">Java ScriptをOFFにされている方はONにしてご利用ください。<br><br>Java Scriptをお使いいただけない方は、PDA・モバイル予約モードをご利用ください。<br>PDA・モバイル予約モードは<a href="http://www.mobile.jal.co.jp">こちら</a></font></span>
+												</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td height="1"></td>
+					</tr>
+				</table>
+			</td>
+			<td width="12"></td>
+		</tr>
+		<tr>
+			<td width="12"><img src="/domes/common4/img/clear.gif" alt="" width="12" height="7"></td>
+			<td width="743"><img src="/domes/common4/img/clear.gif" alt="" width="743" height="7"></td>
+			<td width="12"><img src="/domes/common4/img/clear.gif" alt="" width="12" height="7"></td>
+		</tr>
+	</table>
+	
+	<span style="position:relative;visibility:hidden;">
+</noscript>
+
+
+
+
+
+
+
+
+
+<!-- [ページタイトル] -->
+<div class="pageTitleC01">
+<div class="titleBody">
+<div class="titleFareGuide">
+<table border="0" cellpadding="0" cellspacing="0" width="744">
+	<tr>
+		<th>
+		<h1><img src="/domes/common4/img/head_jtime.gif" width="600" height="47" alt="路線・時刻表　発着案内"></h1>
+		</th>
+	</tr>
+</table>
+<!-- /titleFareGuide --></div>
+<!-- /titleBody --></div>
+<div class="divide"><img src="/domes/common4/img/clear.gif" width="1" height="1" alt=""></div>
+<!-- /pageTitleC01 --></div>
+<!-- /[ページタイトル] -->
+
+
+<div class="spacer"><img src="/domes/common4/img/clear.gif" width="1" height="15" alt=""></div>
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="s3"> 22時54分現在の運航状況のご案内です。<br></span>
+
+当区間におきまして運航の乱れが発生しております。ご迷惑をおかけして誠に申し訳ございません。
+
+
+	<table width="500" border="0" cellpadding="1" cellspacing="0" class="tableA04">
+
+
+		<tr class="thead01">
+			<th>日付</th>
+			<th>出発空港</th>
+			
+			<td rowspan="2">
+				
+					<img src="/domes/common4/img/weather_fair.gif" width="29" height="29">
+				
+				
+				
+				
+				
+					
+			</td>
+			<td rowspan="2" class="number">気温20℃<br>
+				22:30現在</td>
+			
+
+			
+				<th>到着空港</th>
+			
+			
+
+			
+			<td rowspan="2">
+				
+				
+					<img src="/domes/common4/img/weather_clud.gif" width="29" height="29">
+				
+				
+				
+				
+				
+			</td>
+			<td rowspan="2" class="number pseudo-lastChild">気温25℃<br>
+				22:30現在</td>
+			
+			</tr>
+		<tr>
+			<td>5月20日(金)</td>
+			<td>東京羽田</td>
+			
+				<td>沖縄那覇</td>
+			
+			
+		</tr>
+	</table>
+	<div class="spacer"><img src="/domes/common4/img/clear.gif" width="1" height="10" alt=""></div>
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- //// 発着状況 //// -->
+<!-- [発着案内] -->
+<div class="spacer"><img src="/domes/common4/img/clear.gif" width="1" height="10" alt=""></div>
+<strong class="emData">*</strong>がついている便は欠航便・30分以上の出発遅延便・天候調査中の便・条件付きで運航中の便です。<br>
+欠航・遅延便検索については<a href="/rsv/IrregularFlightListInput.do">こちら</a>をご覧ください。　（対象便は欠航・遅延証明書が表示できます。）
+<div id="completedTable">
+<div id="completedTable-body">
+<table border="0" cellpadding="0" cellspacing="0" width="765" class="bargainTableA01">
+	<colgroup>
+		<col width="7%">
+		<col width="1%">
+		<col width="5%">
+		<col width="">
+		<col width="4%">
+		<col width="5%">
+		
+		
+			<col width="25%">
+		
+		<col width="8%">
+		<col width="22%">
+
+	</colgroup>
+	<thead id="timetable">
+		<tr>
+			<th rowspan="2">
+				便名
+			</th>
+			<th colspan="4">
+				出発
+			</th>
+			
+			
+			<th colspan="2">
+				到着
+			</th>
+			
+			<th colspan="2" rowspan="2">
+				備考
+			</th>
+		</tr>
+		<tr>
+			<th>
+				&nbsp;
+			</th>
+			<th>
+				予定
+			</th>
+			<th>
+				出発状況
+			</th>
+			<th>
+				ゲート
+			</th>
+			<th>
+				予定
+			</th>
+			
+			
+			<th>
+				到着状況
+			</th>
+			
+
+		</tr>
+	</thead>
+	<!-- [JAL1501] -->
+	<tbody id="bording">
+		
+			<tr>
+				<!-- 便名 -->
+				
+				<td valign="middle" class="center">
+				
+				
+					<!-- 国際線判定 -->
+					
+					<!-- 臨時便判定 -->
+					
+					<!-- 前日遅延便判定 -->
+					
+					JAL901
+					<!-- マルチ便 -->
+					
+				</td>
+				<!-- 払戻手数料免除便 -->
+				<td>
+					
+					
+						&nbsp;
+					</td>
+				<!-- 出発予定 -->
+				<td class="center">
+					06:20
+				</td>
+				<!-- 出発状況 -->
+				<td>
+					
+					
+					06:27　<span class="emData2">出発済み</span>
+					
+					
+				</td>
+				<!-- 出発ゲート -->
+				<td class="center">
+					
+					
+						9   
+					
+				</td>
+				<!-- 到着予定 -->
+				<td class="center">
+					09:00
+				</td>
+				<!-- 到着状況 -->
+				<!-- 出口 -->
+				
+				
+				<td>
+					
+					
+					09:03　<span class="emData2">到着済み</span>
+					
+				</td>
+				
+				<!-- 備考１ -->
+				<td class="center">
+					<span class="style2"></span>
+				</td>
+				<!-- 備考２ -->
+				<td>
+					<span class="emData"></span>
+				</td>
+			</tr>
+		
+			<tr>
+				<!-- 便名 -->
+				
+				<td valign="middle" class="center">
+				
+				
+					<!-- 国際線判定 -->
+					
+					<!-- 臨時便判定 -->
+					
+					<!-- 前日遅延便判定 -->
+					
+					JAL903
+					<!-- マルチ便 -->
+					
+				</td>
+				<!-- 払戻手数料免除便 -->
+				<td>
+					
+					
+						&nbsp;
+					</td>
+				<!-- 出発予定 -->
+				<td class="center">
+					08:00
+				</td>
+				<!-- 出発状況 -->
+				<td>
+					
+					
+					08:04　<span class="emData2">出発済み</span>
+					
+					
+				</td>
+				<!-- 出発ゲート -->
+				<td class="center">
+					
+					
+						4   
+					
+				</td>
+				<!-- 到着予定 -->
+				<td class="center">
+					10:40
+				</td>
+				<!-- 到着状況 -->
+				<!-- 出口 -->
+				
+				
+				<td>
+					
+					
+					10:27　<span class="emData2">到着済み</span>
+					
+				</td>
+				
+				<!-- 備考１ -->
+				<td class="center">
+					<span class="style2"></span>
+				</td>
+				<!-- 備考２ -->
+				<td>
+					<span class="emData"></span>
+				</td>
+			</tr>
+		
+			<tr>
+				<!-- 便名 -->
+				
+				<td valign="middle" class="center">
+				
+				
+					<!-- 国際線判定 -->
+					
+					<!-- 臨時便判定 -->
+					
+					<!-- 前日遅延便判定 -->
+					
+					JAL905
+					<!-- マルチ便 -->
+					
+				</td>
+				<!-- 払戻手数料免除便 -->
+				<td>
+					
+					
+						&nbsp;
+					</td>
+				<!-- 出発予定 -->
+				<td class="center">
+					08:25
+				</td>
+				<!-- 出発状況 -->
+				<td>
+					
+					
+					08:27　<span class="emData2">出発済み</span>
+					
+					
+				</td>
+				<!-- 出発ゲート -->
+				<td class="center">
+					
+					
+						9   
+					
+				</td>
+				<!-- 到着予定 -->
+				<td class="center">
+					11:05
+				</td>
+				<!-- 到着状況 -->
+				<!-- 出口 -->
+				
+				
+				<td>
+					
+					
+					10:56　<span class="emData2">到着済み</span>
+					
+				</td>
+				
+				<!-- 備考１ -->
+				<td class="center">
+					<span class="style2"></span>
+				</td>
+				<!-- 備考２ -->
+				<td>
+					<span class="emData"></span>
+				</td>
+			</tr>
+		
+			<tr>
+				<!-- 便名 -->
+				
+				<td valign="middle" class="center">
+				
+				
+					<!-- 国際線判定 -->
+					
+					<!-- 臨時便判定 -->
+					
+					<!-- 前日遅延便判定 -->
+					
+					JAL907
+					<!-- マルチ便 -->
+					
+				</td>
+				<!-- 払戻手数料免除便 -->
+				<td>
+					
+					
+						&nbsp;
+					</td>
+				<!-- 出発予定 -->
+				<td class="center">
+					09:55
+				</td>
+				<!-- 出発状況 -->
+				<td>
+					
+					
+					09:58　<span class="emData2">出発済み</span>
+					
+					
+				</td>
+				<!-- 出発ゲート -->
+				<td class="center">
+					
+					
+						2   
+					
+				</td>
+				<!-- 到着予定 -->
+				<td class="center">
+					12:35
+				</td>
+				<!-- 到着状況 -->
+				<!-- 出口 -->
+				
+				
+				<td>
+					
+					
+					12:35　<span class="emData2">到着済み</span>
+					
+				</td>
+				
+				<!-- 備考１ -->
+				<td class="center">
+					<span class="style2"></span>
+				</td>
+				<!-- 備考２ -->
+				<td>
+					<span class="emData"></span>
+				</td>
+			</tr>
+		
+			<tr>
+				<!-- 便名 -->
+				
+				<td valign="middle" class="center">
+				
+				
+					<!-- 国際線判定 -->
+					
+					<!-- 臨時便判定 -->
+					
+					<!-- 前日遅延便判定 -->
+					
+					JAL909
+					<!-- マルチ便 -->
+					
+				</td>
+				<!-- 払戻手数料免除便 -->
+				<td>
+					
+					
+						&nbsp;
+					</td>
+				<!-- 出発予定 -->
+				<td class="center">
+					10:35
+				</td>
+				<!-- 出発状況 -->
+				<td>
+					
+					
+					10:41　<span class="emData2">出発済み</span>
+					
+					
+				</td>
+				<!-- 出発ゲート -->
+				<td class="center">
+					
+					
+						4   
+					
+				</td>
+				<!-- 到着予定 -->
+				<td class="center">
+					13:15
+				</td>
+				<!-- 到着状況 -->
+				<!-- 出口 -->
+				
+				
+				<td>
+					
+					
+					13:20　<span class="emData2">到着済み</span>
+					
+				</td>
+				
+				<!-- 備考１ -->
+				<td class="center">
+					<span class="style2"></span>
+				</td>
+				<!-- 備考２ -->
+				<td>
+					<span class="emData"></span>
+				</td>
+			</tr>
+		
+			<tr>
+				<!-- 便名 -->
+				
+				<td valign="middle" class="center">
+				
+				
+					<!-- 国際線判定 -->
+					
+					<!-- 臨時便判定 -->
+					
+					<!-- 前日遅延便判定 -->
+					
+					JAL913
+					<!-- マルチ便 -->
+					
+				</td>
+				<!-- 払戻手数料免除便 -->
+				<td>
+					
+					
+						&nbsp;
+					</td>
+				<!-- 出発予定 -->
+				<td class="center">
+					11:35
+				</td>
+				<!-- 出発状況 -->
+				<td>
+					
+					
+					11:39　<span class="emData2">出発済み</span>
+					
+					
+				</td>
+				<!-- 出発ゲート -->
+				<td class="center">
+					
+					
+						11  
+					
+				</td>
+				<!-- 到着予定 -->
+				<td class="center">
+					14:15
+				</td>
+				<!-- 到着状況 -->
+				<!-- 出口 -->
+				
+				
+				<td>
+					
+					
+					14:16　<span class="emData2">到着済み</span>
+					
+				</td>
+				
+				<!-- 備考１ -->
+				<td class="center">
+					<span class="style2"></span>
+				</td>
+				<!-- 備考２ -->
+				<td>
+					<span class="emData"></span>
+				</td>
+			</tr>
+		
+			<tr>
+				<!-- 便名 -->
+				
+				<td valign="middle" class="center">
+				
+				
+					<!-- 国際線判定 -->
+					
+					<!-- 臨時便判定 -->
+					
+					<!-- 前日遅延便判定 -->
+					
+					JAL915
+					<!-- マルチ便 -->
+					
+				</td>
+				<!-- 払戻手数料免除便 -->
+				<td>
+					
+					
+						&nbsp;
+					</td>
+				<!-- 出発予定 -->
+				<td class="center">
+					11:55
+				</td>
+				<!-- 出発状況 -->
+				<td>
+					
+					
+					12:02　<span class="emData2">出発済み</span>
+					
+					
+				</td>
+				<!-- 出発ゲート -->
+				<td class="center">
+					
+					
+						4   
+					
+				</td>
+				<!-- 到着予定 -->
+				<td class="center">
+					14:35
+				</td>
+				<!-- 到着状況 -->
+				<!-- 出口 -->
+				
+				
+				<td>
+					
+					
+					14:36　<span class="emData2">到着済み</span>
+					
+				</td>
+				
+				<!-- 備考１ -->
+				<td class="center">
+					<span class="style2"></span>
+				</td>
+				<!-- 備考２ -->
+				<td>
+					<span class="emData"></span>
+				</td>
+			</tr>
+		
+			<tr>
+				<!-- 便名 -->
+				
+				<td valign="middle" class="center">
+				
+				
+					<!-- 国際線判定 -->
+					
+					<!-- 臨時便判定 -->
+					
+					<!-- 前日遅延便判定 -->
+					
+					JAL917
+					<!-- マルチ便 -->
+					
+				</td>
+				<!-- 払戻手数料免除便 -->
+				<td>
+					
+					
+						&nbsp;
+					</td>
+				<!-- 出発予定 -->
+				<td class="center">
+					13:15
+				</td>
+				<!-- 出発状況 -->
+				<td>
+					
+					
+					13:29　<span class="emData2">出発済み</span>
+					
+					
+				</td>
+				<!-- 出発ゲート -->
+				<td class="center">
+					
+					
+						4   
+					
+				</td>
+				<!-- 到着予定 -->
+				<td class="center">
+					15:55
+				</td>
+				<!-- 到着状況 -->
+				<!-- 出口 -->
+				
+				
+				<td>
+					
+					
+					16:11　<span class="emData2">到着済み</span>
+					
+				</td>
+				
+				<!-- 備考１ -->
+				<td class="center">
+					<span class="style2"></span>
+				</td>
+				<!-- 備考２ -->
+				<td>
+					<span class="emData"></span>
+				</td>
+			</tr>
+		
+			<tr>
+				<!-- 便名 -->
+				
+				<td valign="middle" class="center">
+				
+				
+					<!-- 国際線判定 -->
+					
+					<!-- 臨時便判定 -->
+					
+					<!-- 前日遅延便判定 -->
+					
+					JAL919
+					<!-- マルチ便 -->
+					
+				</td>
+				<!-- 払戻手数料免除便 -->
+				<td>
+					
+					
+						&nbsp;
+					</td>
+				<!-- 出発予定 -->
+				<td class="center">
+					14:50
+				</td>
+				<!-- 出発状況 -->
+				<td>
+					
+					
+					14:51　<span class="emData2">出発済み</span>
+					
+					
+				</td>
+				<!-- 出発ゲート -->
+				<td class="center">
+					
+					
+						4   
+					
+				</td>
+				<!-- 到着予定 -->
+				<td class="center">
+					17:30
+				</td>
+				<!-- 到着状況 -->
+				<!-- 出口 -->
+				
+				
+				<td>
+					
+					
+					17:26　<span class="emData2">到着済み</span>
+					
+				</td>
+				
+				<!-- 備考１ -->
+				<td class="center">
+					<span class="style2"></span>
+				</td>
+				<!-- 備考２ -->
+				<td>
+					<span class="emData"></span>
+				</td>
+			</tr>
+		
+			<tr>
+				<!-- 便名 -->
+				
+				
+				<td valign="middle" style="text-align:center;background-color:#ffcccc;">
+				
+					<!-- 国際線判定 -->
+					
+					<!-- 臨時便判定 -->
+					
+					<!-- 前日遅延便判定 -->
+					
+					JAL3947
+					<!-- マルチ便 -->
+					
+				</td>
+				<!-- 払戻手数料免除便 -->
+				<td>
+					
+						<strong class="emData">*</strong>
+					
+					</td>
+				<!-- 出発予定 -->
+				<td class="center">
+					15:20
+				</td>
+				<!-- 出発状況 -->
+				<td>
+					
+					--:--　－
+					
+					
+					
+				</td>
+				<!-- 出発ゲート -->
+				<td class="center">
+					
+					
+						
+					
+				</td>
+				<!-- 到着予定 -->
+				<td class="center">
+					18:00
+				</td>
+				<!-- 到着状況 -->
+				<!-- 出口 -->
+				
+				
+				<td>
+					
+					--:--　－
+					
+					
+				</td>
+				
+				<!-- 備考１ -->
+				<td class="center">
+					<span class="style2">欠航</span>
+				</td>
+				<!-- 備考２ -->
+				<td>
+					<span class="emData"></span>
+				</td>
+			</tr>
+		
+			<tr>
+				<!-- 便名 -->
+				
+				<td valign="middle" class="center">
+				
+				
+					<!-- 国際線判定 -->
+					
+					<!-- 臨時便判定 -->
+					
+					<!-- 前日遅延便判定 -->
+					
+					JAL923
+					<!-- マルチ便 -->
+					
+				</td>
+				<!-- 払戻手数料免除便 -->
+				<td>
+					
+					
+						&nbsp;
+					</td>
+				<!-- 出発予定 -->
+				<td class="center">
+					15:55
+				</td>
+				<!-- 出発状況 -->
+				<td>
+					
+					
+					15:57　<span class="emData2">出発済み</span>
+					
+					
+				</td>
+				<!-- 出発ゲート -->
+				<td class="center">
+					
+					
+						9   
+					
+				</td>
+				<!-- 到着予定 -->
+				<td class="center">
+					18:35
+				</td>
+				<!-- 到着状況 -->
+				<!-- 出口 -->
+				
+				
+				<td>
+					
+					
+					18:28　<span class="emData2">到着済み</span>
+					
+				</td>
+				
+				<!-- 備考１ -->
+				<td class="center">
+					<span class="style2"></span>
+				</td>
+				<!-- 備考２ -->
+				<td>
+					<span class="emData"></span>
+				</td>
+			</tr>
+		
+			<tr>
+				<!-- 便名 -->
+				
+				<td valign="middle" class="center">
+				
+				
+					<!-- 国際線判定 -->
+					
+					<!-- 臨時便判定 -->
+					
+					<!-- 前日遅延便判定 -->
+					
+					JAL925
+					<!-- マルチ便 -->
+					
+				</td>
+				<!-- 払戻手数料免除便 -->
+				<td>
+					
+					
+						&nbsp;
+					</td>
+				<!-- 出発予定 -->
+				<td class="center">
+					17:25
+				</td>
+				<!-- 出発状況 -->
+				<td>
+					
+					
+					17:36　<span class="emData2">出発済み</span>
+					
+					
+				</td>
+				<!-- 出発ゲート -->
+				<td class="center">
+					
+					
+						2   
+					
+				</td>
+				<!-- 到着予定 -->
+				<td class="center">
+					20:05
+				</td>
+				<!-- 到着状況 -->
+				<!-- 出口 -->
+				
+				
+				<td>
+					
+					
+					20:07　<span class="emData2">到着済み</span>
+					
+				</td>
+				
+				<!-- 備考１ -->
+				<td class="center">
+					<span class="style2"></span>
+				</td>
+				<!-- 備考２ -->
+				<td>
+					<span class="emData"></span>
+				</td>
+			</tr>
+		
+			<tr>
+				<!-- 便名 -->
+				
+				<td valign="middle" class="center">
+				
+				
+					<!-- 国際線判定 -->
+					
+					<!-- 臨時便判定 -->
+					
+					<!-- 前日遅延便判定 -->
+					
+					JAL927
+					<!-- マルチ便 -->
+					
+				</td>
+				<!-- 払戻手数料免除便 -->
+				<td>
+					
+					
+						&nbsp;
+					</td>
+				<!-- 出発予定 -->
+				<td class="center">
+					20:00
+				</td>
+				<!-- 出発状況 -->
+				<td>
+					
+					
+					20:02　<span class="emData2">出発済み</span>
+					
+					
+				</td>
+				<!-- 出発ゲート -->
+				<td class="center">
+					
+					
+						4   
+					
+				</td>
+				<!-- 到着予定 -->
+				<td class="center">
+					22:40
+				</td>
+				<!-- 到着状況 -->
+				<!-- 出口 -->
+				
+				
+				<td>
+					
+					
+					22:34　<span class="emData2">到着済み</span>
+					
+				</td>
+				
+				<!-- 備考１ -->
+				<td class="center">
+					<span class="style2"></span>
+				</td>
+				<!-- 備考２ -->
+				<td>
+					<span class="emData"></span>
+				</td>
+			</tr>
+		
+	</tbody>
+</table>
+</div>
+</div>
+
+<!-- //// 発着状況 //// -->
+<div class="spacer"><img src="/domes/common4/img/clear.gif" width="1" height="25" alt=""></div>
+
+
+
+
+
+
+
+
+<!-- [ ご注意・ご案内 ] -->
+<div class="commentField">
+<h2 class="n3">ご注意・ご案内</h2>
+<h3 class="n3 noteHead"><img src="/domes/common4/img/icon_note_001.gif" width="15" height="12" alt="">ご注意</h3>
+<ul class="commentList noteList">
+	<li>国内区間を運航する国際線についても表示される場合がありますが、これらの便は国際線ターミナルの発着となります。</li>
+	<li><strong class="emData">*</strong>がついている便の変更・払戻について<a href="http://www.jal.co.jp/dom/info/irrinfo.html" target="otherwindow" class="inPara"><img src="/domes/common4/img/icon_window_001.gif" width="14" height="11" alt="">こちら</a>をご覧ください。</li>
+	
+	<li>他社運航によるコードシェア便の情報は、運航会社側と異なる場合があります。最新情報につきましては、恐れ入りますが、各運航会社へご確認くださいますようお願いいたします。 </li>
+	
+</ul>
+
+<h3 class="n3">◆表示について</h3>
+<ul class="commentList">
+	<li><span class="plane"><img src="/domes/common4/img/flying.gif" alt="航行中" width="31" height="10"></span>：航行中</li>
+	
+	<li>出発空港のターミナル・ウィング等の情報は<a href="http://www.jal.co.jp/dom/airport/" target="otherwindow" class="inPara"><img src="/domes/common4/img/icon_window_001.gif" width="14" height="11" alt="">空港情報</a>をご確認ください。</li>
+	
+	<li>到着時刻欄に表示される 「北ウィング」「南ウィング」 は、羽田空港での到着ウィングを示しています。</li>
+	<li>便名の前に表示される航空会社コードは以下の航空会社を示すコードです。</li>
+</ul>
+
+
+<table border="0" cellspacing="0" cellpadding="0" class="n3 definitionList">
+	<tr>
+		<th>JAL</th>
+		<td>日本航空（日本航空、JALエクスプレス、ジェイ・エア）</td>
+	</tr>
+	<tr>
+		<th>JTA</th>
+		<td>日本トランスオーシャン航空</td>
+	</tr>
+	<tr>
+		<th>RAC</th>
+		<td>琉球エアーコミューター</td>
+	</tr>
+	<tr>
+		<th>JAC</th>
+		<td>日本エアコミューター</td>
+	</tr>
+	<tr>
+		<th>HAC</th>
+		<td>北海道エアシステム</td>
+	</tr>
+</table>
+
+
+
+<ul class="commentList">
+<li>欠航便・出発/到着遅延便・到着地変更便・引き返し便・天候調査中の便・条件付きで運航中の便は便名欄の背景色がピンクで表示されます。</li>
+</ul>
+
+
+<h3 class="n3">◆ご案内</h3>
+<ul class="commentList">
+	<li>発着情報に関するお問い合わせ先につきましては<a href="https://www.jal.co.jp/information/" target="otherwindow" class="inPara"><img src="/domes/common4/img/icon_window_001.gif" width="14" height="11" alt="">「お問い合わせ一覧」</a>ページをご覧ください。</li>
+</ul>
+
+<!-- /commentField --></div>
+<!-- /[ ご注意・ご案内 ] -->
+
+
+
+
+
+
+<!--  JavaScriptOff 時対応 -->
+<noscript>
+</span>
+</noscript>
+
+
+<!-- [グローバルフッダ] -->
+
+
+
+
+
+
+
+<div id="globalFooter">
+<ul>
+<li><a href="https://www.jal.co.jp/other/system_maintenance.html" class="withIconA" target="otherwindow"><img src="/domes/common4/img/icon_window_001.gif" width="14" height="11" alt="">システムメインテナンス</a></li>
+<li><a href="https://www.jal.co.jp/footer/goriyo/" class="withIconA" target="otherwindow"><img src="/domes/common4/img/icon_window_001.gif" width="14" height="11" alt="">サイト利用案内</a></li>
+<li><a href="https://www.jal.co.jp/information/" class="withIconA" target="otherwindow"><img src="/domes/common4/img/icon_window_001.gif" width="14" height="11" alt="">お問合せ</a></li>
+<li><a href="https://www.jal.co.jp/footer/security.html" class="withIconA" target="otherwindow"><img src="/domes/common4/img/icon_window_001.gif" width="14" height="11" alt="">個人情報保護</a></li>
+</ul>
+<address><img src="/domes/common4/img/footer_txt_001.gif" width="275" height="11" alt="Copyright"></address>
+</div>
+
+<!-- /[グローバルフッダ] -->
+
+</body>
+</html>

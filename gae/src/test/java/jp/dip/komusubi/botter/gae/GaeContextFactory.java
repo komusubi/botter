@@ -22,27 +22,38 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.inject.Provider;
 import javax.inject.Singleton;
+import javax.jdo.JDOHelper;
+import javax.jdo.PersistenceManager;
+import javax.jdo.PersistenceManagerFactory;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
-import jp.dip.komusubi.botter.api.Resolver;
-import jp.dip.komusubi.botter.api.UrlUtil;
+import jp.dip.komusubi.botter.Resolver;
+import jp.dip.komusubi.botter.UrlUtil;
 import jp.dip.komusubi.botter.gae.GaeContext.ResolverManager;
+import jp.dip.komusubi.botter.gae.module.PersistenceManagerProvider;
 
 import org.apache.commons.lang.time.DateUtils;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Binder;
+import com.google.inject.Binding;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.Module;
+import com.google.inject.Provides;
 
 /**
  * @author jun.ozeki
@@ -53,12 +64,20 @@ public class GaeContextFactory {
 	private static Class<?> testCaseClass;
 	
 	public static GaeContext getMockContext(Injector injector, ServletContext servletContext) {
+//		Map<Key<?>, Binding<?>>
+		for (Entry<Key<?>, Binding<?>> es: injector.getAllBindings().entrySet()) {
+			System.out.println("key is : " + es.getKey() + " and binding is : " + es.getValue());
+		}
+		// Key, Annotationでなんとかできんか？
 		GaeContext.CONTEXT.setInjector(injector);
 		GaeContext.CONTEXT.setServletContext(servletContext);
 		return GaeContext.CONTEXT;
 	}
 	public static void initializeContext() {
-		initializeContext(null);
+		initializeContext((Class<?>) null);
+	}
+	public static void initializeContext(Module... modules) {
+		getMockContext(getDefaultInjector(modules), getDefaultServletContext());
 	}
 	public static void initializeContext(Class<?> clazz) {
 		if (clazz != null)
@@ -70,16 +89,37 @@ public class GaeContextFactory {
 	/**
 	 * @return
 	 */
-	private static Injector getDefaultInjector() {
-		return Guice.createInjector(new Module() {
-
+	private static Injector getDefaultInjector(Module... modules) {
+		List<Module> list = new ArrayList<Module>();
+		for (Module m: modules)
+			list.add(m);
+		list.add(new Module() {
 			@Override
 			public void configure(Binder binder) {
 				binder.bind(ResolverManager.class).toProvider(MockResolverManagerProvider.class).in(Singleton.class);
 			}
 		});
+		return Guice.createInjector(list.toArray(new Module[0]));
 	}
+	/**
+	 * 永続化モジュール.
+	 * Bootstrap.AppEngineModuleはServlet.Request scopeのためテスト用にPersistenceModuleを作成. 
+	 * @author jun.ozeki
+	 * @since 2011/05/23
+	 */
+	public static class PersistenceMoudle extends AbstractModule {
+		private PersistenceManagerFactory pmf = JDOHelper.getPersistenceManagerFactory("transactions-optional");
+		
+		@Override
+		protected void configure() {
+			bind(PersistenceManager.class).toProvider(PersistenceManagerProvider.class).in(Singleton.class);
+		}
 
+		@Provides
+		public PersistenceManagerFactory getPersistenceManagerFactory() {
+			return pmf ;
+		}
+	}
 	public static class MockResolverManagerProvider implements Provider<ResolverManager> {
 		@Override
 		public ResolverManager get() {
