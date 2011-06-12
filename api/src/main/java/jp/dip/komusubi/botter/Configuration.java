@@ -32,8 +32,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
-import jp.dip.komusubi.botter.api.Site;
-
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang.time.DateUtils;
