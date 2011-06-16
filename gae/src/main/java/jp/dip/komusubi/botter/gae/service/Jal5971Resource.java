@@ -192,13 +192,18 @@ public class Jal5971Resource {
 		Job job = jobManager.find(jobId);
 		Response response;
 		// from query parameter
-		if (job.available(uriInfo.getQueryParameters())) {
-			if (job.execute())
-				response = Response.ok().build();
-			else
-				response = Response.status(Response.Status.BAD_REQUEST).build();
-		} else {
-			response = Response.notModified().build();
+		try {
+			if (job.available(uriInfo.getQueryParameters())) {
+				if (job.execute())
+					response = Response.ok().build();
+				else
+					response = Response.status(Response.Status.BAD_REQUEST).build();
+			} else {
+				response = Response.notModified().build();
+			}
+		} catch (IllegalArgumentException e) {
+			logger.warn(e.getLocalizedMessage());
+			response = Response.status(Response.Status.BAD_REQUEST).build();
 		}
 		return response;
 	}

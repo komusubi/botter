@@ -231,6 +231,7 @@ public enum GaeContext {
 		}
 	}
 
+	// package private 
 	void setInjector(Injector injector) {
 		this.injector = injector;
 	}

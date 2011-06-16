@@ -30,7 +30,6 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 import jp.dip.komusubi.botter.gae.GaeContext;
-import jp.dip.komusubi.botter.gae.model.GenericDao;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -66,7 +65,7 @@ public class Route implements Serializable {
 	private Date activateAt = new Date(0L); // 就航中の場合は1970-01-01
 	@Persistent
 	private Date deactivated; // 就航終了日
-	private transient GenericDao<Airport, String> genericDao = 
+	private transient AirportDao airportDao = 
 		CONTEXT.getInstance(GaeContext.AIRPORT_DAO);
 	
 	/**
@@ -92,7 +91,7 @@ public class Route implements Serializable {
 		return key;
 	}
 	public Airport getDeparture() {
-		return genericDao.read(departure);
+		return airportDao.read(departure);
 //	public String getDeparture() {
 //		return departure;
 	}
@@ -104,7 +103,7 @@ public class Route implements Serializable {
 	}
 
 	public Airport getArrival() {
-		return genericDao.read(arrival);
+		return airportDao.read(arrival);
 //	public String getArrival() {
 //		return arrival;
 	}

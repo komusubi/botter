@@ -33,8 +33,11 @@ public interface FlightStatusDao extends GenericDao<FlightStatus, Long> {
 	List<FlightStatus> findByBeforeDeparture(Route specificRoute);
 	List<FlightStatus> findByBeforeDeparture(String flightRoute);
 	List<FlightStatus> findByBeforeDeparture(Date dateOfTravel, String flightRoute);
+	List<FlightStatus> findByBeforeDeparture(Date dateOfTravel);
+	
 	List<FlightStatus> findByBeforeArrival(Date dateOfTravel, Route specificRoute);
 	List<FlightStatus> findByBeforeArrival(Route specificRoute);
 	List<FlightStatus> findByBeforeArrival(String flightRoute);
 	List<FlightStatus> findByBeforeArrival(Date dateOfTravel, String flightRoute);
+	List<FlightStatus> findByBeforeArrival(Date dateOfTravel);
 }

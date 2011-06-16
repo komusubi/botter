@@ -118,6 +118,18 @@ public class JdoFlightStatusDao implements FlightStatusDao {
 		Route route = routeDao.readByAirportCode(airports[0], airports[1]);
 		return findByBeforeDeparture(dateOfTravel, route);
 	}
+	// 出発前の便を時刻指定のみで検索
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<FlightStatus> findByBeforeDeparture(Date dateOfTravel) {
+		Query query = pm.newQuery(FlightStatus.class);
+		query.setFilter("scheduledDepartureDate > dateOfTravel"
+				+ " && departureDate == null"
+				+ " && delay == false");
+		query.declareImports("java.util.Date dateOfTravel");
+		query.setOrdering("scheduledDepartureDate desc");
+		return (List<FlightStatus>) query.execute(dateOfTravel);
+	}
 	// 到着前の便を検索
 	@SuppressWarnings("unchecked")
 	@Override
@@ -148,5 +160,17 @@ public class JdoFlightStatusDao implements FlightStatusDao {
 		String[] airports = flightRoute.split("-=.");
 		Route route = routeDao.readByAirportCode(airports[0], airports[1]);
 		return findByBeforeArrival(dateOfTravel, route);
+	}
+	// 到着前の便を時刻指定のみで検索
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<FlightStatus> findByBeforeArrival(Date dateOfTravel) {
+		Query query = pm.newQuery(FlightStatus.class);
+		query.setFilter("scheduledArrivalDate > dateOfTravel"
+				+ " && arrivalDate == null"
+				+ " && delay == false");
+		query.declareImports("java.util.Date dateOfTravel");
+		query.setOrdering("scheduledArrivalDate desc");
+		return (List<FlightStatus>) query.execute(dateOfTravel);
 	}
 }

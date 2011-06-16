@@ -29,8 +29,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import jp.dip.komusubi.botter.gae.ParseException;
-import jp.dip.komusubi.botter.gae.model.GenericDao;
 import jp.dip.komusubi.botter.gae.model.airline.Airport;
+import jp.dip.komusubi.botter.gae.model.airline.AirportDao;
 
 import org.htmlparser.Node;
 import org.htmlparser.Parser;
@@ -47,7 +47,7 @@ import org.htmlparser.util.ParserException;
  * @version $Id: HtmlScrapeAirportDao.java 1356 2010-12-31 05:13:01Z jun $
  * @since 2010/10/04
  */
-public class HtmlScraperAirportDao implements GenericDao<Airport, String> {
+public class HtmlScraperAirportDao implements AirportDao {
 	private static HashMap<String, Airport> map = new HashMap<String, Airport>();
 	private String url;
 	
@@ -132,5 +132,13 @@ public class HtmlScraperAirportDao implements GenericDao<Airport, String> {
 	@Override
 	public List<Airport> findAll() {
 		return new ArrayList<Airport>(map.values());
+	}
+	@Override
+	public List<Airport> findByActivate(boolean active) {
+		throw new UnsupportedOperationException();
+	}
+	@Override
+	public Airport readByCode(String code) {
+		return read(code);
 	}
 }
