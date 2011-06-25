@@ -32,7 +32,6 @@ import javax.jdo.annotations.PrimaryKey;
 
 import jp.dip.komusubi.botter.gae.GaeContext;
 import jp.dip.komusubi.botter.gae.model.Entry;
-import jp.dip.komusubi.botter.gae.model.GenericDao;
 import jp.dip.komusubi.botter.gae.util.TextContentFomatter;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -71,8 +70,7 @@ public class FlightStatus implements Entry, Serializable {
 	private boolean delay;
 	@Persistent
 	private String memo;
-	private transient GenericDao<Route, Key> routeDao =
-		CONTEXT.getInstance(GaeContext.ROUTE_DAO);
+	private transient RouteDao routeDao =	CONTEXT.getInstance(GaeContext.ROUTE_DAO);
 	
 	@Override
 	public long getId() {
@@ -105,10 +103,14 @@ public class FlightStatus implements Entry, Serializable {
 	}
 	public FlightStatus setRoute(Route route) {
 		if (route.getKey() == null) {
-//			FIXME　GenericDaoでは jdoRouteDao固有のメソッドcallできない
-//			routeDao.findBy
-//			例外スローにしちゃう？
-			throw new IllegalArgumentException("route.getKey() is null!");
+			if (route.getDeparture() == null || route.getArrival() == null)
+				throw new IllegalArgumentException("route.getDeparture() or getArrival() is null!");
+			
+			Route routeInStorage = routeDao.readByAirportCode(route.getDeparture().getCode(),
+														route.getArrival().getCode());
+			if (routeInStorage == null)
+				throw new IllegalArgumentException("route not found in storage");
+			routeKey = routeInStorage.getKey();
 		}
 		routeKey = route.getKey();
 		return this;

@@ -100,7 +100,7 @@ public class JdoRouteDaoTest {
 	public void create() {
 		airportDao.create(hnd);
 		Route route = new Route(hnd, itm);
-		route.setActivate(true).setActivateAt(new Date());
+		route.setActivate(true).setTimestamp(new Date());
 		target.create(route);
 
 		Query query = new Query(Route.class.getSimpleName());
@@ -143,7 +143,7 @@ public class JdoRouteDaoTest {
 	@Test
 	public void readByAirportCodeBool() {
 		Route hnd_itm = new Route(hnd, itm);
-		hnd_itm.setActivate(false).setDeactivated(new Date());
+		hnd_itm.setActivate(false).setTimestamp(new Date());
 		target.create(hnd_itm);
 		
 		Route spk_oka = new Route(spk, oka);

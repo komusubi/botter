@@ -25,11 +25,15 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 
+import jp.dip.komusubi.botter.gae.GaeContext;
 import jp.dip.komusubi.botter.gae.GaeContextFactory;
 import jp.dip.komusubi.botter.gae.model.Entry;
 import jp.dip.komusubi.botter.gae.model.airline.Airport;
+import jp.dip.komusubi.botter.gae.model.airline.AirportDao;
 import jp.dip.komusubi.botter.gae.model.airline.Route;
+import jp.dip.komusubi.botter.gae.model.airline.RouteDao;
 import jp.dip.komusubi.botter.gae.module.dao.JdoAirportDao;
+import jp.dip.komusubi.botter.gae.module.dao.JdoRouteDao;
 import junitx.util.PrivateAccessor;
 
 import org.junit.Before;
@@ -50,14 +54,20 @@ public class FlightStatusScraperTest {
 	@Before
 	public void before() {
 		GaeContextFactory.initializeContext(new Module() {
+		
 			@Override
 			public void configure(Binder binder) {
-				binder.bind(JdoAirportDao.class);
+				binder.bind(AirportDao.class).to(JdoAirportDao.class);
+				binder.bind(RouteDao.class).to(JdoRouteDao.class);
 			}
+			
 		}, new GaeContextFactory.PersistenceMoudle());
 		
+		// FIXME reouteDaoでエラー発生する(NPE) なんで？
 		Route route = new Route(new Airport("HND", "東京羽田"), new Airport("ITM", "大阪伊丹"));
-//		route.setKey(new Key
+		RouteDao routeDao = GaeContext.CONTEXT.getInstance(RouteDao.class);
+		routeDao.create(route);
+		
 		target = new FlightStatusScraper(route) {
 			@Override
 			protected String buildUrl(String baseUrl) {
@@ -87,6 +97,15 @@ public class FlightStatusScraperTest {
 		PrivateAccessor.setField(target, "url", "http://yahoo.co.jp");
 		for (Entry e: entries) {
 			System.out.println("entry : " + e.getText());
+		}
+	}
+	@Test
+	public void actualScrape() {
+		target = new FlightStatusScraper(new Route("ITM", "ITM"));
+		try {
+			target.scrape();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 

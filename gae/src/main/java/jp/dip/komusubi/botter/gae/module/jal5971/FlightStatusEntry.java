@@ -21,14 +21,14 @@ import static jp.dip.komusubi.botter.gae.GaeContext.CONTEXT;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
-
-import javax.inject.Inject;
+import java.util.List;
 
 import jp.dip.komusubi.botter.Resolver;
 import jp.dip.komusubi.botter.gae.model.Entry;
+import jp.dip.komusubi.botter.gae.model.airline.FlightStatus;
 import jp.dip.komusubi.botter.gae.model.airline.Route;
-import jp.dip.komusubi.botter.gae.module.dao.JdoAirportDao;
 import jp.dip.komusubi.botter.gae.util.TextContentFomatter;
 
 import org.apache.commons.lang.time.DateUtils;
@@ -50,8 +50,6 @@ public class FlightStatusEntry implements Entry {
 	private Resolver<Date> resolver = CONTEXT.getResolverManager().getDateResolver();
 	private Date created;
 	private String url;
-	@Inject 
-	private JdoAirportDao airportDao;
 	private String[] hashTags;
 	private Route route; 
 	
@@ -148,5 +146,9 @@ public class FlightStatusEntry implements Entry {
 	}
 	public boolean isDelay() {
 		return "*".equals(getElement(column, 1).getText().trim());
+	}
+	
+	public List<FlightStatus> getFlightStatusList() {
+		return new ArrayList<FlightStatus>();
 	}
 }

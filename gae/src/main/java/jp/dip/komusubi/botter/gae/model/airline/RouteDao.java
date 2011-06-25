@@ -31,6 +31,7 @@ import com.google.appengine.api.datastore.Key;
  */
 public interface RouteDao extends GenericDao<Route, Key>{
 	List<Route> findByActivate(boolean active);
+	List<Route> findByActivate(boolean active, int count);
 	Route readByAirportCode(String departureCode, String arrivalCode);
 	Route readByAirportCode(String departureCode, String arrivalCode, boolean active);
 }

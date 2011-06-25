@@ -21,13 +21,17 @@ package jp.dip.komusubi.botter.gae.module.jal5971;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import jp.dip.komusubi.botter.BotterException;
 import jp.dip.komusubi.botter.gae.GaeContext;
 import jp.dip.komusubi.botter.gae.model.Entry;
 import jp.dip.komusubi.botter.gae.model.Scraper;
+import jp.dip.komusubi.botter.gae.model.airline.FlightStatus;
 import jp.dip.komusubi.botter.gae.model.airline.Route;
+import jp.dip.komusubi.botter.gae.util.ConvertModel;
 
 import org.apache.commons.lang.StringUtils;
 import org.htmlparser.Node;
@@ -129,5 +133,23 @@ public class FlightStatusScraper implements Scraper {
 			throw new BotterException(e);
 		}
 		return entries;
+	}
+	
+	public List<FlightStatus> getFlightStatuses() {
+		List<FlightStatus> flightStatuses = new ArrayList<FlightStatus>();
+		for (Entry e:scrape()) {
+			FlightStatusEntry entry = (FlightStatusEntry) e;
+			FlightStatus fs = ConvertModel.toFlightStatus(entry);
+			flightStatuses.add(fs);
+		}
+		return flightStatuses;
+	}
+	
+	public Map<String, FlightStatus> getMapped() {
+		Map<String, FlightStatus> map = new HashMap<String, FlightStatus>();
+		for (FlightStatus fs: getFlightStatuses()) {
+			map.put(fs.getFlightName(), fs);
+		}
+		return map;
 	}
 }

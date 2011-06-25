@@ -126,7 +126,7 @@ public class JdoFlightStatusDao implements FlightStatusDao {
 		query.setFilter("scheduledDepartureDate > dateOfTravel"
 				+ " && departureDate == null"
 				+ " && delay == false");
-		query.declareImports("java.util.Date dateOfTravel");
+		query.declareParameters("java.util.Date dateOfTravel");
 		query.setOrdering("scheduledDepartureDate desc");
 		return (List<FlightStatus>) query.execute(dateOfTravel);
 	}
@@ -169,7 +169,7 @@ public class JdoFlightStatusDao implements FlightStatusDao {
 		query.setFilter("scheduledArrivalDate > dateOfTravel"
 				+ " && arrivalDate == null"
 				+ " && delay == false");
-		query.declareImports("java.util.Date dateOfTravel");
+		query.declareParameters("java.util.Date dateOfTravel");
 		query.setOrdering("scheduledArrivalDate desc");
 		return (List<FlightStatus>) query.execute(dateOfTravel);
 	}

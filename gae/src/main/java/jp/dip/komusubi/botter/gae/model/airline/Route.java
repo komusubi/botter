@@ -61,12 +61,11 @@ public class Route implements Serializable {
 //	private Airport arrival;
 	@Persistent
 	private boolean activate = true;
+//	@Persistent
+//	private Date activateAt = new Date(0L); // 就航中の場合は1970-01-01
 	@Persistent
-	private Date activateAt = new Date(0L); // 就航中の場合は1970-01-01
-	@Persistent
-	private Date deactivated; // 就航終了日
-	private transient AirportDao airportDao = 
-		CONTEXT.getInstance(GaeContext.AIRPORT_DAO);
+	private Date timestamp = new Date(0L); // 初期値 1970/01/01
+	private transient AirportDao airportDao = CONTEXT.getInstance(GaeContext.AIRPORT_DAO);
 	
 	/**
 	 * constructor.
@@ -123,21 +122,21 @@ public class Route implements Serializable {
 		return this;
 	}
 
-	public Date getActivateAt() {
-		return activateAt;
+//	public Date getActivateAt() {
+//		return activateAt;
+//	}
+
+//	public Route setActivateAt(Date activateAt) {
+//		this.activateAt = activateAt;
+//		return this;
+//	}
+
+	public Date getTimestamp() {
+		return timestamp;
 	}
 
-	public Route setActivateAt(Date activateAt) {
-		this.activateAt = activateAt;
-		return this;
-	}
-
-	public Date getDeactivated() {
-		return deactivated;
-	}
-
-	public Route setDeactivated(Date deactivated) {
-		this.deactivated = deactivated;
+	public Route setTimestamp(Date timestamp) {
+		this.timestamp = timestamp;
 		return this;
 	}
 	@Override

@@ -81,6 +81,17 @@ public class JdoRouteDao implements RouteDao { //GenericDao<Route, Key> {
 		return (List<Route>) query.execute(Boolean.valueOf(active));
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Route> findByActivate(boolean active, int count) {
+		Query query = pm.newQuery(Route.class);
+		query.setFilter("activate == active");
+		query.declareParameters("Boolean active");
+		query.setOrdering("timestamp");
+		query.setRange("0," + String.valueOf(count));
+		return (List<Route>) query.execute(Boolean.valueOf(active));
+	}
+	
 	// find airport code
 	@Override
 	public Route readByAirportCode(String departureCode, String arrivalCode) {

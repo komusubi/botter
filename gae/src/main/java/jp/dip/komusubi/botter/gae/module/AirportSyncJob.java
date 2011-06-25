@@ -125,7 +125,7 @@ public class AirportSyncJob implements Job {
 				} else {
 					if (!route.isActivate()) {
 						route.setActivate(true)
-							.setActivateAt(dateResolver.resolve());
+							.setTimestamp(dateResolver.resolve());
 						routeDao.update(route);
 					}
 				}
