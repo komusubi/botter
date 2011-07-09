@@ -70,7 +70,7 @@ public class JdoRouteDaoTest {
 				binder.bind(JdoAirportDao.class);
 			}
 			
-		}, new GaeContextFactory.PersistenceMoudle());
+		}, new GaeContextFactory.PersistenceModule());
 	}
 	
 	@Before

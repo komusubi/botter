@@ -64,6 +64,11 @@ public class GaeLocalResource extends ExternalResource {
 			public boolean enforceApiDeadlines() {
 				return false;
 			}
+
+			@Override
+			public boolean simulateProductionLatencies() {
+				return false;
+			}
 		}));
 	}
 

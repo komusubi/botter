@@ -22,13 +22,15 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.jdo.JDOHelper;
@@ -44,10 +46,10 @@ import jp.dip.komusubi.botter.UrlUtil;
 import jp.dip.komusubi.botter.gae.GaeContext.ResolverManager;
 import jp.dip.komusubi.botter.gae.module.PersistenceManagerProvider;
 
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang.time.DateUtils;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Binder;
 import com.google.inject.Binding;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -90,16 +92,18 @@ public class GaeContextFactory {
 	 * @return
 	 */
 	private static Injector getDefaultInjector(Module... modules) {
-		List<Module> list = new ArrayList<Module>();
-		for (Module m: modules)
-			list.add(m);
-		list.add(new Module() {
-			@Override
-			public void configure(Binder binder) {
-				binder.bind(ResolverManager.class).toProvider(MockResolverManagerProvider.class).in(Singleton.class);
-			}
-		});
+		List<Module> list = Arrays.asList(modules);
+//		list.add(new AbstractModule() {
+//			@Override
+//			public void configure() {
+//				bind(ResolverManager.class).toProvider(MockResolverManagerProvider.class).in(Singleton.class);
+//			}
+//		});
 		return Guice.createInjector(list.toArray(new Module[0]));
+	}
+	
+	public static void clean() {
+		GaeContext.CONTEXT.setInjector(null);
 	}
 	/**
 	 * 永続化モジュール.
@@ -107,7 +111,7 @@ public class GaeContextFactory {
 	 * @author jun.ozeki
 	 * @since 2011/05/23
 	 */
-	public static class PersistenceMoudle extends AbstractModule {
+	public static class PersistenceModule extends AbstractModule {
 		private PersistenceManagerFactory pmf = JDOHelper.getPersistenceManagerFactory("transactions-optional");
 		
 		@Override
@@ -121,6 +125,12 @@ public class GaeContextFactory {
 		}
 	}
 	public static class MockResolverManagerProvider implements Provider<ResolverManager> {
+		private String ymd;
+		
+		@Inject
+		public MockResolverManagerProvider(@Named("timestamp") String ymd) {
+			this.ymd = ymd;
+		}
 		@Override
 		public ResolverManager get() {
 			return new ResolverManager() {
@@ -132,12 +142,16 @@ public class GaeContextFactory {
 						@Override
 						public Date resolve() {
 							try {
-								return DateUtils.parseDate("2011/03/24 22:36:00", new String[]{"yyyy/MM/dd HH:mm:ss"});
+								String dateStr = null;
+								if (ymd != null)
+									dateStr = ymd;
+								else
+									dateStr = DateFormatUtils.format(new Date(), "yyyy/MM/dd HH:mm:ss");
+								return DateUtils.parseDate(dateStr, new String[]{"yyyy/MM/dd HH:mm:ss"});
 							} catch (ParseException e) {
 								return new Date();
 							}
 						}
-						
 					};
 				}
 
@@ -160,6 +174,14 @@ public class GaeContextFactory {
 				
 			};
 		}
+	}
+	public static class MockResolverManagerModule extends AbstractModule {
+
+		@Override
+		protected void configure() {
+			bind(ResolverManager.class).toProvider(MockResolverManagerProvider.class);
+		}
+		
 	}
 	/**
 	 * @return

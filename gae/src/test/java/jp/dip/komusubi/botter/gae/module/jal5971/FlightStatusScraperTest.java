@@ -18,6 +18,9 @@
  */
 package jp.dip.komusubi.botter.gae.module.jal5971;
 
+import static jp.dip.komusubi.botter.gae.TestUtils.parseDate;
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -26,7 +29,10 @@ import java.net.URL;
 import java.util.List;
 
 import jp.dip.komusubi.botter.gae.GaeContext;
+import jp.dip.komusubi.botter.gae.GaeContext.ResolverManager;
 import jp.dip.komusubi.botter.gae.GaeContextFactory;
+import jp.dip.komusubi.botter.gae.GaeContextFactory.MockResolverManagerProvider;
+import jp.dip.komusubi.botter.gae.GaeLocalDatastoreResource;
 import jp.dip.komusubi.botter.gae.model.Entry;
 import jp.dip.komusubi.botter.gae.model.airline.Airport;
 import jp.dip.komusubi.botter.gae.model.airline.AirportDao;
@@ -36,11 +42,16 @@ import jp.dip.komusubi.botter.gae.module.dao.JdoAirportDao;
 import jp.dip.komusubi.botter.gae.module.dao.JdoRouteDao;
 import junitx.util.PrivateAccessor;
 
+import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
-import com.google.inject.Binder;
-import com.google.inject.Module;
+import com.google.inject.AbstractModule;
+import com.google.inject.name.Names;
 
 
 /**
@@ -49,22 +60,41 @@ import com.google.inject.Module;
  * @since 2011/05/18
  */
 public class FlightStatusScraperTest {
+	@Rule
+	public GaeLocalDatastoreResource env = new GaeLocalDatastoreResource();
+	@Rule 
+	public ExpectedException ex = ExpectedException.none();
 	private FlightStatusScraper target;
+	private String dateStr;
+	private static GaeContextFactory.PersistenceModule persistenceModule;
 	
+	@BeforeClass
+	public static void befoerClass() {
+		persistenceModule = new GaeContextFactory.PersistenceModule();
+	}
 	@Before
 	public void before() {
-		GaeContextFactory.initializeContext(new Module() {
+	}
+	
+	public void scenario() {
+		GaeContextFactory.initializeContext(new AbstractModule() {
 		
 			@Override
-			public void configure(Binder binder) {
-				binder.bind(AirportDao.class).to(JdoAirportDao.class);
-				binder.bind(RouteDao.class).to(JdoRouteDao.class);
+			public void configure() {
+				bind(AirportDao.class).to(JdoAirportDao.class);
+				bind(RouteDao.class).to(JdoRouteDao.class);
+				bind(ResolverManager.class).toProvider(MockResolverManagerProvider.class);
+				bind(String.class)
+					.annotatedWith(Names.named("timestamp")).toInstance(dateStr);
 			}
-			
-		}, new GaeContextFactory.PersistenceMoudle());
+		}, persistenceModule);
 		
-		// FIXME reouteDaoでエラー発生する(NPE) なんで？
-		Route route = new Route(new Airport("HND", "東京羽田"), new Airport("ITM", "大阪伊丹"));
+		Airport[] airports = {new Airport("HND", "東京羽田"), new Airport("ITM", "大阪伊丹")};
+		AirportDao airportDao = GaeContext.CONTEXT.getInstance(AirportDao.class);
+		for (Airport airport: airports) 
+			airportDao.create(airport);
+				
+		Route route = new Route(airports[0], airports[1]);
 		RouteDao routeDao = GaeContext.CONTEXT.getInstance(RouteDao.class);
 		routeDao.create(route);
 		
@@ -75,20 +105,12 @@ public class FlightStatusScraperTest {
 			}
 		};
 	}
-
-//	private static String watchedLog;
-//	@Rule
-//	public MethodRule watchman = new TestWatchman() {
-//		@Override
-//		public void failed(Throwable e, FrameworkMethod method) {
-//			watchedLog += method.getName() + " " + e.getClass().getSimpleName() + "\n";
-//		}
-//		@Override
-//		public void succeeded(FrameworkMethod method) {
-//			watchedLog += method.getName() + " " + "success!\n";
-//		}
-//	};
 	
+	@After
+	public void after() {
+		GaeContextFactory.clean();
+	}
+	@Ignore
 	@Test
 	public void scrape() throws Throwable {
 		PrivateAccessor.setField(target, "url", getFileContent("hnd-oka.html"));
@@ -99,6 +121,7 @@ public class FlightStatusScraperTest {
 			System.out.println("entry : " + e.getText());
 		}
 	}
+	@Ignore
 	@Test
 	public void actualScrape() {
 		target = new FlightStatusScraper(new Route("ITM", "ITM"));
@@ -109,6 +132,47 @@ public class FlightStatusScraperTest {
 		}
 	}
 
+	@Test
+	public void requestYesterday() throws Exception {
+		dateStr = "2011/06/30 10:00:00";
+		scenario();
+		target = new FlightStatusScraper(new Route("HND", "ITM"), 
+						parseDate("2011/06/29 10:00:00"), "");
+		String url = "http://yahoo.co.jp";
+		String expectedQuery = "?DPORT=HND&APORT=ITM&DATEFLG=1";
+		assertEquals(url + expectedQuery, target.buildUrl(url)); 
+	}
+	@Test
+	public void requestToday() throws Exception {
+		dateStr = "2011/06/30 12:00:00";
+		scenario();
+		target = new FlightStatusScraper(new Route("ITM", "HND"),
+				parseDate("2011/06/30 23:00:00"));
+		String url = "http://yahoo.co.jp";
+		String expectedQuery = "?DPORT=ITM&APORT=HND";
+		assertEquals(url + expectedQuery, target.buildUrl(url));
+	}
+	@Test
+	public void requestTomorrow() throws Exception {
+		dateStr = "2011/06/30 13:00:00";
+		scenario();
+		target = new FlightStatusScraper(new Route("HND", "ITM"),
+				parseDate("2011/07/01 11:00:00"));
+		String url = "http://yahoo.co.jp";
+		String expectedQuery = "?DPORT=HND&APORT=ITM&DATEFLG=2";
+		assertEquals(url + expectedQuery, target.buildUrl(url));
+	}
+	@Test
+	public void requestOutOfRange() throws Exception {
+		ex.expect(IllegalStateException.class);
+		ex.expectMessage("requested date: ");
+		dateStr = "2011/06/30 20:00:00";
+		scenario();
+		target = new FlightStatusScraper(new Route("HND", "ITM"),
+					parseDate("2011/07/03 20:00:00"));
+		target.buildUrl("http://yahoo.co.jp");
+	}
+	
 	/**
 	 * @param string
 	 * @return
@@ -135,4 +199,6 @@ public class FlightStatusScraperTest {
 		}
 		return "";
 	}
+	
+	
 }

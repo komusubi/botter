@@ -18,6 +18,7 @@
  */
 package jp.dip.komusubi.botter.gae.module.dao;
 
+import static jp.dip.komusubi.botter.gae.TestUtils.parseDate;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Date;
@@ -34,7 +35,6 @@ import jp.dip.komusubi.botter.gae.model.airline.FlightStatus;
 import jp.dip.komusubi.botter.gae.model.airline.Route;
 import jp.dip.komusubi.botter.gae.module.PersistenceManagerProvider;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -69,7 +69,7 @@ public class JdoFlightStatusDaoTest {
 				binder.bind(JdoFlightStatusDao.class);
 				binder.bind(JdoRouteDao.class);
 			}
-		}, new GaeContextFactory.PersistenceMoudle());
+		}, new GaeContextFactory.PersistenceModule());
 	}
 	
 	@Before
@@ -124,10 +124,6 @@ public class JdoFlightStatusDaoTest {
 			target.create(fs);
 	}
 	
-	private Date parseDate(String format) throws Exception {
-		String[] dateFormats = new String[]{"yyyy/MM/dd HH:mm"};
-		return DateUtils.parseDate(format, dateFormats); 
-	}
 	@Test
 	public void findBy出発前路線() throws Exception {
 		Route route1 = new Route(new Airport("HND", "東京羽田"), new Airport("ITM", "大阪伊丹"));
