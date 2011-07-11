@@ -186,6 +186,7 @@ public enum GaeContext {
 			instance = injector.getInstance(type);
 		return instance;
 	}
+	
 	public ResolverManager getResolverManager() {
 		Provider<ResolverManager> provider = injector.getProvider(ResolverManager.class);
 		return provider.get();

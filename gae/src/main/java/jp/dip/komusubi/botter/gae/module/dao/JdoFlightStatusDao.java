@@ -90,7 +90,7 @@ public class JdoFlightStatusDao implements FlightStatusDao {
 		Query query = pm.newQuery(FlightStatus.class);
 		// 指定した路線で出発時刻が登録されていないデータを検索
 		query.setFilter("routeKey == specificKey"
-				+ " && scheduledDepartureDate > dateOfTravel"
+				+ " && scheduledDepartureDate < dateOfTravel"
 				+ " && departureDate == null"
 				+ " && delay == false");
 		query.declareParameters("com.google.appengine.api.datastore.Key specificKey"
@@ -123,7 +123,7 @@ public class JdoFlightStatusDao implements FlightStatusDao {
 	@Override
 	public List<FlightStatus> findByBeforeDeparture(Date dateOfTravel) {
 		Query query = pm.newQuery(FlightStatus.class);
-		query.setFilter("scheduledDepartureDate > dateOfTravel"
+		query.setFilter("scheduledDepartureDate < dateOfTravel"
 				+ " && departureDate == null"
 				+ " && delay == false");
 		query.declareParameters("java.util.Date dateOfTravel");
@@ -136,7 +136,7 @@ public class JdoFlightStatusDao implements FlightStatusDao {
 	public List<FlightStatus> findByBeforeArrival(Date dateOfTravel, Route specificRoute) {
 		Query query = pm.newQuery(FlightStatus.class);
 		query.setFilter("routeKey == specificKey"
-				+ " && scheduledArrivalDate > dateOfTravel"
+				+ " && scheduledArrivalDate < dateOfTravel"
 				+ " && arrivalDate == null"
 				+ " && delay == false");
 		query.declareParameters("com.google.appengine.api.datastore.Key specificKey"
@@ -166,7 +166,7 @@ public class JdoFlightStatusDao implements FlightStatusDao {
 	@Override
 	public List<FlightStatus> findByBeforeArrival(Date dateOfTravel) {
 		Query query = pm.newQuery(FlightStatus.class);
-		query.setFilter("scheduledArrivalDate > dateOfTravel"
+		query.setFilter("scheduledArrivalDate < dateOfTravel"
 				+ " && arrivalDate == null"
 				+ " && delay == false");
 		query.declareParameters("java.util.Date dateOfTravel");

@@ -36,9 +36,9 @@ import jp.dip.komusubi.botter.gae.model.airline.FlightStatus;
 import jp.dip.komusubi.botter.gae.model.airline.FlightStatusDao;
 import jp.dip.komusubi.botter.gae.model.airline.Route;
 import jp.dip.komusubi.botter.gae.model.airline.RouteDao;
-import jp.dip.komusubi.botter.gae.module.dao.JdoFlightStatusDao;
 import jp.dip.komusubi.botter.gae.module.jal5971.FlightStatusScraper;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,8 +66,7 @@ public class FlightStatusTwitter implements Job {
 	public boolean available(Map<String, List<String>> param) {
 		List<String> values = param.get("route");
 		// 15分前時刻を取得
-		Calendar limitTime = Calendar.getInstance();
-		limitTime.setTime(dateResolver.resolve());
+		Calendar limitTime = DateUtils.toCalendar(dateResolver.resolve());
 		limitTime.add(Calendar.MINUTE, -15);
 		
 		// 発着時刻から15分を経過しても実績時刻が設定されていない便情報を取得
@@ -107,7 +106,9 @@ public class FlightStatusTwitter implements Job {
 			return false;
 		Map<Route, List<FlightStatus>> routeFlightMap = mapped(flights);
 		for (Entry<Route, List<FlightStatus>> e: routeFlightMap.entrySet()) {
+			
 			FlightStatusScraper scraper = new FlightStatusScraper(e.getKey());
+			
 			Map<String, FlightStatus> scrapedMap = scraper.getMapped();
 			for (FlightStatus storage: e.getValue()) {
 				FlightStatus scraped = scrapedMap.get(storage.getFlightName());

@@ -125,21 +125,25 @@ public class FlightStatusEntry implements Entry {
 		}
 	}
 	public Date getDepartureDate() {
+		Date date = null;
 		try {
-			return DateUtils.parseDate(getElement(column, 3).getText().trim(), new String[]{HOUR_FORMAT});
+			if (getElement(column, 3) != null)
+				date = DateUtils.parseDate(getElement(column, 3).getText().trim(), new String[]{HOUR_FORMAT});
 		} catch (ParseException e) {
 			logger.warn("departureDate() parse error {}", e.getLocalizedMessage());
-//			return null;
-			return resolver.resolve();
 		}
+		return date;
 	}
 	public Date getArrivalDate() {
+		Date date = null;
 		try {
-			return DateUtils.parseDate(getElement(column, 7).getText().trim(), new String[]{HOUR_FORMAT});
+			if (getElement(column, 7) != null)
+				date = DateUtils.parseDate(getElement(column, 7).getText().trim(), 
+						new String[]{HOUR_FORMAT});
 		} catch (ParseException e) {
 			logger.warn("arrivalDate() parse error {}", e.getLocalizedMessage());
-			return resolver.resolve();
 		}
+		return date;
 	}
 	public String getMemo() {
 		return getElement(column, 9).getText().trim();

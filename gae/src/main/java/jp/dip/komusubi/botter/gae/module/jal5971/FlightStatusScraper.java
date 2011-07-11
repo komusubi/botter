@@ -21,11 +21,14 @@ package jp.dip.komusubi.botter.gae.module.jal5971;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import jp.dip.komusubi.botter.BotterException;
+import jp.dip.komusubi.botter.Resolver;
 import jp.dip.komusubi.botter.gae.GaeContext;
 import jp.dip.komusubi.botter.gae.model.Entry;
 import jp.dip.komusubi.botter.gae.model.Scraper;
@@ -34,6 +37,8 @@ import jp.dip.komusubi.botter.gae.model.airline.Route;
 import jp.dip.komusubi.botter.gae.util.ConvertModel;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateFormatUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.htmlparser.Node;
 import org.htmlparser.Parser;
 import org.htmlparser.filters.HasAttributeFilter;
@@ -53,22 +58,28 @@ import org.slf4j.LoggerFactory;
 public class FlightStatusScraper implements Scraper {
 	private static final String FLIGHT_STATUS_SCRAPE_TARGET = "jal5971.flight.status.url";
 	private static final Logger logger = LoggerFactory.getLogger(FlightStatusScraper.class);
+	private Resolver<Date> dateResolver = GaeContext.CONTEXT.getResolverManager().getDateResolver();
 	private Route route;
 	private String url;
 	private String[] hashTags;
 	private Parser parser;
-	
+	private Date date;
+
 	/**
 	 * constructor.
+	 * @param url
+	 * @param date
 	 * @param route
+	 * @param hashTags
 	 */
-	public FlightStatusScraper(String url, Route route, String... hashTags) {
+	public FlightStatusScraper(String url, Date date, Route route, String... hashTags) {
 		try {
 			new URL(url);
 		} catch (MalformedURLException e) {
 			throw new IllegalArgumentException(e);
 		}
 		this.url = url;
+		this.date = date;
 		this.route = route;
 		this.hashTags = hashTags;
 		parser = new Parser();
@@ -77,23 +88,57 @@ public class FlightStatusScraper implements Scraper {
 	/**
 	 * constructor.
 	 * @param route
+	 * @param tags
 	 */
 	public FlightStatusScraper(Route route, String... tags) {
-		this(GaeContext.CONTEXT.getProperty(FLIGHT_STATUS_SCRAPE_TARGET), route, tags);
+		this(GaeContext.CONTEXT.getProperty(FLIGHT_STATUS_SCRAPE_TARGET), 
+				GaeContext.CONTEXT.getResolverManager().getDateResolver().resolve(),
+				route, 
+				tags);
+	}
+
+	public FlightStatusScraper(Route route, Date date, String... tags) {
+		this(GaeContext.CONTEXT.getProperty(FLIGHT_STATUS_SCRAPE_TARGET),
+				date,
+				route,
+				tags);
 	}
 	
 	protected String buildUrl(String baseUrl) {
+		String queryFragments = null;
+		Calendar current = DateUtils.toCalendar(dateResolver.resolve());
+		Calendar requested = DateUtils.toCalendar(this.date);
+		Calendar tomorrow = (Calendar) current.clone();
+		tomorrow.add(Calendar.DAY_OF_MONTH, 1);
+		Calendar yesterday = (Calendar) current.clone();
+		yesterday.add(Calendar.DAY_OF_MONTH, -1);
+		
+		if (DateUtils.truncatedEquals(requested, yesterday, Calendar.DAY_OF_MONTH)) {
+			queryFragments = "&DATEFLG=1"; // 前日
+		} else if (DateUtils.truncatedEquals(requested, tomorrow, Calendar.DAY_OF_MONTH)) {
+			queryFragments = "&DATEFLG=2"; // 翌日
+		} else if (DateUtils.truncatedEquals(requested, current, Calendar.DAY_OF_MONTH)) {
+			queryFragments = "";
+		}  
+		if (queryFragments == null)
+			throw new IllegalStateException("requested date: " 
+					+ DateFormatUtils.format(requested, "yyyy/MM/dd") 
+					+ " was over rage, current date is " 
+					+ DateFormatUtils.format(current, "yyyy/MM/dd"));
+				
 		StringBuilder builder = new StringBuilder(baseUrl);
 		builder.append("?DPORT=")
 				.append(route.getDeparture().getCode())
 				.append("&APORT=")
-				.append(route.getArrival().getCode());
+				.append(route.getArrival().getCode())
+				.append(queryFragments);
 		return builder.toString();
 	}
 	
 	@Override
 	public List<Entry> scrape() {
-		HasParentFilter filter = new HasParentFilter(new HasAttributeFilter("class", "bargainTableA01"), true);
+		HasParentFilter filter = new HasParentFilter(
+				new HasAttributeFilter("class", "bargainTableA01"), true);
 		List<Entry> entries = new ArrayList<Entry>();
 		try {
 			parser.setResource(buildUrl(url));
@@ -137,7 +182,7 @@ public class FlightStatusScraper implements Scraper {
 	
 	public List<FlightStatus> getFlightStatuses() {
 		List<FlightStatus> flightStatuses = new ArrayList<FlightStatus>();
-		for (Entry e:scrape()) {
+		for (Entry e: scrape()) {
 			FlightStatusEntry entry = (FlightStatusEntry) e;
 			FlightStatus fs = ConvertModel.toFlightStatus(entry);
 			flightStatuses.add(fs);
