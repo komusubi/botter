@@ -26,8 +26,8 @@ import jp.dip.komusubi.botter.Resolver;
 import jp.dip.komusubi.botter.gae.ParseException;
 import jp.dip.komusubi.botter.gae.model.Entry;
 
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * 

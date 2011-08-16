@@ -36,9 +36,9 @@ import jp.dip.komusubi.botter.gae.model.airline.FlightStatus;
 import jp.dip.komusubi.botter.gae.model.airline.Route;
 import jp.dip.komusubi.botter.gae.util.ConvertModel;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateFormatUtils;
-import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.htmlparser.Node;
 import org.htmlparser.Parser;
 import org.htmlparser.filters.HasAttributeFilter;
@@ -159,7 +159,9 @@ public class FlightStatusScraper implements Scraper {
 						isHeader = false;
 					} else if ("tr".equalsIgnoreCase(tag.getTagName())) {
 //						isLineComplete = true;
-						entries.add(new FlightStatusEntry(route, header, column, hashTags));
+						if (column.size() == 0)
+							continue;
+						entries.add(newEntry(header, column, hashTags));
 						column = new NodeList();
 					}
 				} else if (n instanceof TextNode) {
@@ -178,6 +180,10 @@ public class FlightStatusScraper implements Scraper {
 			throw new BotterException(e);
 		}
 		return entries;
+	}
+	
+	protected Entry newEntry(NodeList header, NodeList column, String... tags) {
+		return new FlightStatusEntry(route, header, column, tags); 
 	}
 	
 	public List<FlightStatus> getFlightStatuses() {

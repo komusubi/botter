@@ -24,7 +24,7 @@ import java.util.Date;
 import jp.dip.komusubi.botter.Resolver;
 import jp.dip.komusubi.botter.gae.ParseException;
 
-import org.apache.commons.lang.time.DateFormatUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 
 /**
  * 

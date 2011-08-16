@@ -47,7 +47,7 @@ import jp.dip.komusubi.botter.gae.module.dao.JdoFlightStatusDao;
 import jp.dip.komusubi.botter.gae.module.dao.JdoRouteDao;
 import junitx.util.PrivateAccessor;
 
-import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -129,12 +129,12 @@ public class FlightStatusTwitterTest {
 			.setDepartureDate(parseDate("2011/06/25 10:16:05"))
 			.setArrivalDate(parseDate("2011/06/25 11:23:00"))
 			.setRoute(routeDao.readByAirportCode("HND", "ITM"))
-			.setFlightName("JL0133");
+			.setFlightName("JAL121");
 		FlightStatus fs2 = new FlightStatus();
 		fs2.setScheduledDepartureDate(parseDate("2011/06/25 10:40:05"))
 			.setScheduledArrivalDate(parseDate("2011/06/25 11:50:10"))
 			.setRoute(routeDao.readByAirportCode("HND", "ITM"))
-			.setFlightName("JL0134");
+			.setFlightName("JAL125");
 		for (FlightStatus f: Arrays.asList(fs1, fs2))
 			flightDao.create(f);
 	}

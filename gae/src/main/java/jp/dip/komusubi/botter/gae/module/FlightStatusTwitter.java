@@ -28,7 +28,6 @@ import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
-import jp.dip.komusubi.botter.Bird;
 import jp.dip.komusubi.botter.Resolver;
 import jp.dip.komusubi.botter.gae.GaeContext;
 import jp.dip.komusubi.botter.gae.model.Job;
@@ -38,7 +37,7 @@ import jp.dip.komusubi.botter.gae.model.airline.Route;
 import jp.dip.komusubi.botter.gae.model.airline.RouteDao;
 import jp.dip.komusubi.botter.gae.module.jal5971.FlightStatusScraper;
 
-import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,15 +49,13 @@ import org.slf4j.LoggerFactory;
 public class FlightStatusTwitter implements Job {
 	public static final String JOBID = "flight";
 	private static final Logger logger = LoggerFactory.getLogger(FlightStatusTwitter.class);
-	private Bird bird;
 	private FlightStatusDao flightStatusDao;
 	private RouteDao routeDao;
 	private Resolver<Date> dateResolver = GaeContext.CONTEXT.getResolverManager().getDateResolver();
 	private List<FlightStatus> flights;
 	
 	@Inject
-	public FlightStatusTwitter(Bird bird, FlightStatusDao flightStatusDao) {
-		this.bird = bird;
+	public FlightStatusTwitter(FlightStatusDao flightStatusDao) {
 		this.flightStatusDao = flightStatusDao;
 	}
 	
@@ -102,7 +99,7 @@ public class FlightStatusTwitter implements Job {
 
 	@Override
 	public boolean execute() {
-		if (flights == null || flights.size() < 0)
+		if (flights == null || flights.size() <= 0)
 			return false;
 		Map<Route, List<FlightStatus>> routeFlightMap = mapped(flights);
 		for (Entry<Route, List<FlightStatus>> e: routeFlightMap.entrySet()) {

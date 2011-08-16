@@ -21,10 +21,11 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.jdo.PersistenceManager;
+import javax.jdo.Query;
 
 import jp.dip.komusubi.botter.gae.model.Entry;
+import jp.dip.komusubi.botter.gae.model.EntryDao;
 import jp.dip.komusubi.botter.gae.model.EntryMessage;
-import jp.dip.komusubi.botter.gae.model.GenericDao;
 import jp.dip.komusubi.botter.gae.util.ConvertModel;
 
 /**
@@ -32,7 +33,7 @@ import jp.dip.komusubi.botter.gae.util.ConvertModel;
  * @version $Id$
  * @since 2011/05/08
  */
-public class JdoEntryMessageDao implements GenericDao<Entry, Long> {
+public class JdoEntryMessageDao implements EntryDao {
 	private PersistenceManager pm;
 
 	@Inject
@@ -71,4 +72,11 @@ public class JdoEntryMessageDao implements GenericDao<Entry, Long> {
 				.execute();
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Entry> findByBeforeTweet() {
+		Query query = pm.newQuery(Entry.class);
+		query.setFilter("tweeted == null");
+		return (List<Entry>) query.execute();
+	}
 }

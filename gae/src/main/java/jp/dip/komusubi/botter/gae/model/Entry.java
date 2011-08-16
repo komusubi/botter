@@ -18,6 +18,7 @@
  */
 package jp.dip.komusubi.botter.gae.model;
 
+import java.io.Serializable;
 import java.net.URL;
 import java.util.Date;
 
@@ -26,7 +27,7 @@ import java.util.Date;
  * @version $Id: Entry.java 1356 2010-12-31 05:13:01Z jun $
  * @since 2010/08/14
  */
-public interface Entry {
+public interface Entry extends Serializable {
 
 	long getId();
 	

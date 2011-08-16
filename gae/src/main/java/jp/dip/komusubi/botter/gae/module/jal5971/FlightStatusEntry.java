@@ -31,7 +31,7 @@ import jp.dip.komusubi.botter.gae.model.airline.FlightStatus;
 import jp.dip.komusubi.botter.gae.model.airline.Route;
 import jp.dip.komusubi.botter.gae.util.TextContentFomatter;
 
-import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.htmlparser.nodes.TextNode;
 import org.htmlparser.util.NodeList;
 import org.slf4j.Logger;
